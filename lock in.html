@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOCK IN — learn by doing</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#080b12;--bg2:#0d121c;--panel:#121a28;--panel2:#182233;
+  --line:#22304a;--line2:#2e3f5c;
+  --text:#e8eefb;--muted:#8d9bb5;--dim:#5f6d86;
+  --acc:#38bdf8;--acc2:#a78bfa;--acc3:#22d3ee;
+  --ok:#34d399;--bad:#fb7185;--warn:#fbbf24;
+  --gold:#fbbf24;
+  --r:14px;--r2:10px;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(1200px 600px at 12% -8%,#14304d55,transparent 60%),
+             radial-gradient(900px 500px at 92% 4%,#3b2a6b44,transparent 55%),var(--bg);
+  color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+body.light{
+  --bg:#f4f6fb;--bg2:#eef1f8;--panel:#ffffff;--panel2:#f7f9fd;
+  --line:#d6dbe7;--line2:#b9c2d4;
+  --text:#0e1524;--muted:#5b6680;--dim:#8a94ac;
+  background:#f4f6fb;
+}
+a{color:var(--acc);text-decoration:none}
+button{font-family:inherit;font-size:.9rem;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:.92rem}
+h1,h2,h3,h4{line-height:1.2;margin:0 0 .4em}
+code{font-family:var(--mono);font-size:.88em;background:#1b2637;padding:.12em .4em;border-radius:5px;color:#9fd9ff}
+body.light code{background:#e2e8f5;color:#1e5f8f}
+pre{margin:0}
+::selection{background:#38bdf855}
+
+header.top{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);background:#080b12cc;border-bottom:1px solid var(--line)}
+body.light header.top{background:#ffffffcc}
+.nav{max-width:1320px;margin:0 auto;padding:.7rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.5rem;font-weight:800;letter-spacing:-.02em;font-size:1.15rem;cursor:pointer;user-select:none}
+.brand .lock{font-size:1.1rem;filter:drop-shadow(0 0 8px #38bdf8aa)}
+.brand i{font-style:normal;background:linear-gradient(92deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navlinks{display:flex;gap:.15rem;margin-left:.6rem;flex-wrap:wrap}
+.navlinks button{padding:.42rem .72rem;border-radius:9px;color:var(--muted);font-weight:600;font-size:.84rem;transition:.15s}
+.navlinks button:hover{color:var(--text);background:#ffffff0d}
+body.light .navlinks button:hover{background:#00000008}
+.navlinks button.on{color:var(--text);background:linear-gradient(180deg,#ffffff14,#ffffff08);box-shadow:inset 0 0 0 1px var(--line2)}
+body.light .navlinks button.on{background:#ffffff}
+.hud{margin-left:auto;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:.4rem;background:var(--panel);border:1px solid var(--line);padding:.28rem .58rem;border-radius:999px;font-size:.76rem;font-weight:700}
+.chip b{color:var(--acc3);font-variant-numeric:tabular-nums}
+.chip small{color:var(--dim);font-weight:600;font-size:.64rem;text-transform:uppercase;letter-spacing:.06em}
+.titlechip{
+  background:linear-gradient(135deg,#fbbf2422,#a78bfa22);
+  border-color:#fbbf2455;
+  color:var(--gold);font-size:.74rem;
+}
+.titlechip span{font-weight:800}
+.iconbtn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);font-size:.95rem}
+.iconbtn:hover{background:var(--panel2);border-color:var(--line2)}
+main{max-width:1320px;margin:0 auto;padding:2rem 1.2rem 5rem}
+.view{display:none;animation:fade .3s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.6rem 1.2rem;color:var(--dim);font-size:.8rem;text-align:center}
+
+.muted{color:var(--muted)}.dim{color:var(--dim)}.center{text-align:center}
+.row{display:flex;gap:.6rem;align-items:center}.wrap{flex-wrap:wrap}.grow{flex:1}
+.tag{display:inline-block;padding:.16rem .55rem;border-radius:999px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;background:#38bdf81f;color:var(--acc);border:1px solid #38bdf840}
+.tag.v{background:#a78bfa1f;color:var(--acc2);border-color:#a78bfa40}
+.tag.g{background:#34d3991f;color:var(--ok);border-color:#34d39940}
+.tag.y{background:#fbbf241f;color:var(--warn);border-color:#fbbf2440}
+.tag.r{background:#fb71851f;color:var(--bad);border-color:#fb718540}
+.btn{display:inline-flex;align-items:center;gap:.45rem;justify-content:center;padding:.58rem 1.05rem;border-radius:var(--r2);font-weight:700;font-size:.87rem;background:var(--panel2);border:1px solid var(--line2);color:var(--text);transition:.15s}
+.btn:hover{background:#1f2b3f;border-color:#3d5175;transform:translateY(-1px)}
+body.light .btn:hover{background:#e8edf7}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#05121c;border-color:transparent;box-shadow:0 6px 24px -8px var(--acc)}
+.btn.pri:hover{filter:brightness(1.1)}
+.btn.ok{background:linear-gradient(135deg,#34d399,#22d3ee);color:#04140f;border-color:transparent}
+.btn.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1000;border-color:transparent}
+.btn.sm{padding:.35rem .7rem;font-size:.79rem}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
+.btn.ghost:hover{color:var(--text);background:#ffffff0a}
+body.light .btn.ghost:hover{background:#00000008}
+.btn.danger{background:transparent;border-color:#fb718555;color:var(--bad)}
+.btn.danger:hover{background:#fb718518}
+.card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:1.3rem}
+body.light .card{background:var(--panel)}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+
+.hero{padding:3rem 0 2.2rem;max-width:840px}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;letter-spacing:-.035em;margin-bottom:.5rem}
+.hero h1 span{background:linear-gradient(100deg,var(--acc),var(--acc2) 60%,var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:1.08rem;color:var(--muted);max-width:660px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin-top:2rem}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.1rem}
+.kpi b{display:block;font-size:1.7rem;font-weight:900;letter-spacing:-.03em;color:var(--acc3);font-variant-numeric:tabular-nums}
+.kpi small{color:var(--dim);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+
+/* title banner */
+.titlebanner{
+  margin-top:1.6rem;padding:1.2rem 1.4rem;border-radius:var(--r);
+  background:linear-gradient(120deg,#fbbf2418,#a78bfa1a 60%,#38bdf818);
+  border:1px solid #fbbf2455;display:flex;gap:1rem;align-items:center;
+}
+.titlebanner .em{font-size:2.4rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 12px #fbbf2488)}
+.titlebanner h3{margin:0;font-size:1.2rem;color:var(--gold);letter-spacing:-.02em}
+.titlebanner .desc{color:var(--muted);font-size:.88rem;margin-top:.1rem}
+.titlebanner .prog{margin-top:.5rem;height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.titlebanner .prog div{height:100%;background:linear-gradient(90deg,var(--gold),var(--acc2))}
+
+.lcard{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:1.15rem;cursor:pointer;transition:.18s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:.6rem}
+body.light .lcard{background:var(--panel)}
+.lcard::after{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--acc),var(--acc2));opacity:0;transition:.2s}
+.lcard:hover{transform:translateY(-3px);border-color:var(--line2);box-shadow:0 10px 40px -12px rgba(0,0,0,.8)}
+.lcard:hover::after{opacity:1}
+.lcard h3{font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
+.lcard p{margin:0;font-size:.86rem;color:var(--muted);flex:1}
+.lcard .foot{display:flex;align-items:center;gap:.5rem;font-size:.74rem;color:var(--dim);font-weight:700;flex-wrap:wrap}
+.done-badge{position:absolute;top:.85rem;right:.85rem;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--ok),var(--acc3));color:#04140f;display:grid;place-items:center;font-size:.85rem;font-weight:900;z-index:2}
+
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:1.4rem}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:.5rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--r2);padding:.5rem .8rem}
+.search input{background:none;border:none;outline:none;color:var(--text);flex:1}
+.pill{padding:.36rem .8rem;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--panel);border:1px solid var(--line);color:var(--muted);transition:.15s}
+.pill:hover{color:var(--text);border-color:var(--line2)}
+.pill.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#05121c;border-color:transparent}
+
+.lhead{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.lhead h2{font-size:1.55rem;font-weight:900;letter-spacing:-.03em;margin:0}
+.pbar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:.9rem 0 1.4rem}
+.pbar div{height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:99px}
+.focusbar{display:flex;align-items:center;gap:.8rem;background:linear-gradient(90deg,#38bdf818,#a78bfa12);border:1px solid #38bdf840;border-radius:var(--r2);padding:.6rem .9rem;margin-bottom:1rem;font-size:.85rem;flex-wrap:wrap}
+.focusbar b{font-family:var(--mono);font-size:1.15rem;color:var(--acc3);font-variant-numeric:tabular-nums}
+.stepnav{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center}
+.dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:.74rem;font-weight:800;background:var(--panel);border:1px solid var(--line);color:var(--dim);transition:.15s;cursor:pointer}
+.dot.on{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 3px #38bdf822}
+.dot.done{background:#34d39922;border-color:#34d39966;color:var(--ok)}
+.dot.locked{opacity:.35;cursor:not-allowed}
+.dot:not(.locked):hover{transform:translateY(-2px)}
+.step{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:1.6rem}
+body.light .step{background:var(--panel)}
+.step h3{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+.step .body{color:#c6d2e6;font-size:.97rem}
+body.light .step .body{color:#2a344a}
+.step .body p{margin:.6em 0}
+.step .body ul{margin:.5em 0;padding-left:1.3em}
+.step .body li{margin:.25em 0}
+pre.code{background:#070b12;border:1px solid var(--line);border-radius:var(--r2);padding:1rem 1.1rem;font-family:var(--mono);font-size:.86rem;line-height:1.65;overflow-x:auto;color:#c9e5ff;white-space:pre;margin:.8rem 0}
+body.light pre.code{background:#0f1521;color:#d6ecff}
+textarea.editor{width:100%;min-height:150px;background:#070b12;border:1px solid var(--line);border-radius:var(--r2);padding:1rem;font-family:var(--mono);font-size:.88rem;line-height:1.6;color:#c9e5ff;resize:vertical;outline:none}
+body.light textarea.editor{background:#0f1521;color:#d6ecff}
+textarea.editor:focus{border-color:var(--acc);box-shadow:0 0 0 3px #38bdf822}
+input.answer{width:100%;background:#070b12;border:1px solid var(--line);border-radius:var(--r2);padding:.75rem 1rem;font-family:var(--mono);font-size:.92rem;color:#c9e5ff;outline:none}
+body.light input.answer{background:#0f1521;color:#d6ecff}
+input.answer:focus{border-color:var(--acc);box-shadow:0 0 0 3px #38bdf822}
+.opt{display:flex;gap:.7rem;align-items:flex-start;padding:.8rem 1rem;border-radius:var(--r2);border:1px solid var(--line);background:var(--panel2);cursor:pointer;transition:.15s;margin-bottom:.5rem;font-size:.93rem}
+.opt:hover{border-color:var(--line2);background:#1c2739}
+body.light .opt:hover{background:#edf1fa}
+.opt .k{width:24px;height:24px;flex:0 0 24px;border-radius:7px;display:grid;place-items:center;background:#0b1220;border:1px solid var(--line2);font-size:.75rem;font-weight:900;color:var(--muted)}
+body.light .opt .k{background:#e8edf7}
+.opt.sel{border-color:var(--acc);background:#38bdf814}
+.opt.sel .k{background:var(--acc);color:#04121c;border-color:transparent}
+.opt.right{border-color:var(--ok);background:#34d39918}
+.opt.right .k{background:var(--ok);color:#04140f;border-color:transparent}
+.opt.wrong{border-color:var(--bad);background:#fb718518}
+.opt.wrong .k{background:var(--bad);color:#1c0409;border-color:transparent}
+.feedback{border-radius:var(--r2);padding:.85rem 1rem;margin-top:1rem;font-size:.9rem;border:1px solid;display:flex;gap:.7rem}
+.feedback.ok{background:#34d39912;border-color:#34d39955;color:#a7f3d0}
+body.light .feedback.ok{color:#0a7050}
+.feedback.bad{background:#fb718512;border-color:#fb718555;color:#fecdd3}
+body.light .feedback.bad{color:#a42340}
+.feedback .ic{font-size:1.05rem;line-height:1.3}
+.hintbox{margin-top:.7rem;font-size:.83rem;color:var(--warn);background:#fbbf2410;border:1px dashed #fbbf2440;padding:.6rem .8rem;border-radius:var(--r2)}
+body.light .hintbox{color:#8a5a00}
+.stepfoot{display:flex;gap:.7rem;align-items:center;margin-top:1.5rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.2rem}
+.console{background:#04070c;border:1px solid var(--line);border-radius:var(--r2);padding:1rem;font-family:var(--mono);font-size:.85rem;line-height:1.6;min-height:120px;max-height:400px;overflow:auto;white-space:pre-wrap;word-break:break-word;color:#8ce99a;margin-top:.8rem}
+.console .err{color:var(--bad)}.console .sys{color:var(--dim)}
+
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:860px){.pg{grid-template-columns:1fr}}
+.langtabs{display:flex;gap:.3rem;margin-bottom:.7rem;flex-wrap:wrap}
+
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(15px,1fr));gap:4px;margin-top:.8rem}
+.heat i{aspect-ratio:1;border-radius:4px;background:#141d2c;display:block}
+body.light .heat i{background:#e2e8f5}
+.heat i.l1{background:#0e4a63}.heat i.l2{background:#147d9e}
+.heat i.l3{background:#22b8d6}.heat i.l4{background:#5ee0f5}
+.badge{display:flex;gap:.7rem;align-items:center;padding:.75rem .9rem;border-radius:var(--r2);background:var(--panel2);border:1px solid var(--line);opacity:.4;transition:.2s}
+.badge.got{opacity:1;border-color:#fbbf2455;background:linear-gradient(135deg,#fbbf2412,#a78bfa10)}
+.badge .ic{font-size:1.5rem;width:34px;text-align:center}
+.badge b{display:block;font-size:.88rem}
+.badge small{color:var(--dim);font-size:.74rem}
+.lvlbar{height:12px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.lvlbar div{height:100%;background:linear-gradient(90deg,var(--acc3),var(--acc),var(--acc2));transition:width .6s}
+
+.titlegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.9rem}
+.tcard{
+  padding:1rem;border-radius:var(--r);border:1px solid var(--line);background:var(--panel2);
+  opacity:.5;transition:.2s;position:relative;
+}
+.tcard.got{opacity:1;border-color:#fbbf2466;background:linear-gradient(135deg,#fbbf2410,#a78bfa08)}
+.tcard.current{border-color:var(--gold);box-shadow:0 0 0 3px #fbbf2430}
+.tcard .em{font-size:1.8rem;line-height:1}
+.tcard h4{margin:.4rem 0 .1rem;font-size:1rem;letter-spacing:-.01em}
+.tcard small{color:var(--dim);font-size:.75rem;font-weight:600}
+.tcard .lock{position:absolute;top:.6rem;right:.7rem;font-size:.85rem;color:var(--dim)}
+
+.studio{display:grid;grid-template-columns:360px 1fr;gap:1.2rem;align-items:start}
+@media(max-width:960px){.studio{grid-template-columns:1fr}}
+.panel{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:1.2rem}
+body.light .panel{background:var(--panel)}
+.panel h3{font-size:.95rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800;margin-bottom:.9rem}
+.fld{display:block;margin-bottom:.8rem}
+.fld span{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:.3rem}
+.fld input,.fld select,.fld textarea{width:100%;background:#070b12;border:1px solid var(--line);border-radius:var(--r2);padding:.55rem .75rem;color:var(--text);outline:none}
+body.light .fld input,body.light .fld select,body.light .fld textarea{background:#f9fafd}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--acc)}
+.fld textarea{font-family:var(--mono);font-size:.82rem;min-height:70px;resize:vertical}
+.steppedit{border:1px solid var(--line);border-radius:var(--r2);padding:.9rem;margin-bottom:.7rem;background:#0c1320}
+body.light .steppedit{background:#f7f9fd}
+.steppedit .hd{display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem}
+.steppedit .hd b{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--acc)}
+.steppedit .hd .grow{flex:1}
+
+#toast{position:fixed;bottom:1.4rem;left:50%;transform:translate(-50%,140%);background:linear-gradient(135deg,var(--acc),var(--acc2));color:#05121c;font-weight:800;padding:.75rem 1.3rem;border-radius:999px;box-shadow:0 12px 40px -8px #38bdf8aa;z-index:200;transition:transform .35s cubic-bezier(.34,1.56,.64,1);font-size:.88rem;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{transform:translate(-50%,0)}
+#toast.gold{background:linear-gradient(135deg,var(--gold),#f59e0b);color:#1a1000;box-shadow:0 12px 40px -8px #fbbf24aa}
+.modal{position:fixed;inset:0;background:#04070ccc;backdrop-filter:blur(6px);z-index:150;display:none;place-items:center;padding:1.2rem}
+.modal.on{display:grid}
+.modal .box{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line2);border-radius:18px;padding:2rem;max-width:560px;width:100%;text-align:center;box-shadow:0 10px 40px -12px rgba(0,0,0,.8);animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+body.light .modal .box{background:var(--panel)}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal .big{font-size:3.4rem;line-height:1}
+.modal h2{font-size:1.6rem;font-weight:900;margin-top:.5rem}
+
+.cmdpal{position:fixed;inset:0;background:#04070cd9;backdrop-filter:blur(8px);z-index:180;display:none;align-items:flex-start;justify-content:center;padding:8vh 1.2rem 1.2rem}
+.cmdpal.on{display:flex}
+.cmdpal .box{background:var(--panel);border:1px solid var(--line2);border-radius:14px;max-width:620px;width:100%;box-shadow:0 20px 60px -10px #000;overflow:hidden;animation:pop .25s ease}
+body.light .cmdpal .box{background:#fff}
+.cmdpal input{width:100%;background:transparent;border:none;outline:none;padding:1rem 1.2rem;font-size:1rem;color:var(--text);border-bottom:1px solid var(--line)}
+.cmdpal .results{max-height:52vh;overflow:auto;padding:.4rem}
+.cmdpal .result{display:flex;align-items:center;gap:.8rem;padding:.7rem .9rem;border-radius:10px;cursor:pointer;font-size:.92rem}
+.cmdpal .result:hover,.cmdpal .result.sel{background:var(--panel2)}
+.cmdpal .result .ic{width:26px;text-align:center}
+.cmdpal .result .sub{color:var(--dim);font-size:.78rem;margin-left:auto}
+
+.cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem}
+.cheatcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:1.1rem}
+.cheatcard h4{margin:0 0 .6rem;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--acc)}
+.cheatcard .row{display:flex;gap:.7rem;padding:.28rem 0;font-size:.85rem;border-bottom:1px dashed var(--line)}
+.cheatcard .row:last-child{border-bottom:none}
+.cheatcard .row code{flex:0 0 42%;background:transparent;padding:0;color:var(--acc3);font-size:.82rem}
+.cheatcard .row span{color:var(--muted);font-size:.82rem}
+
+.note-area{width:100%;min-height:140px;background:#070b12;border:1px solid var(--line);border-radius:var(--r2);padding:.9rem;font-family:var(--sans);font-size:.9rem;color:var(--text);outline:none;resize:vertical}
+body.light .note-area{background:#f9fafd}
+.note-area:focus{border-color:var(--acc);box-shadow:0 0 0 3px #38bdf822}
+
+.activity{display:flex;gap:.9rem;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.activity .ic{font-size:1.05rem}
+.activity .when{color:var(--dim);font-size:.75rem;margin-left:auto}
+
+.dailycard{background:linear-gradient(120deg,#38bdf814,#a78bfa14);border:1px solid #38bdf840;border-radius:var(--r);padding:1rem 1.2rem;display:flex;gap:.9rem;align-items:flex-start;margin-top:1.6rem}
+.dailycard .ic{font-size:1.4rem}
+
+@media(max-width:700px){
+  .nav{padding:.6rem .8rem}
+  .navlinks button{padding:.36rem .5rem;font-size:.76rem}
+  .hud .chip small{display:none}
+  .titlechip span{max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:bottom}
+  main{padding:1.4rem .9rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="nav">
+    <div class="brand" data-go="home"><span class="lock">🔒</span>LOCK<i>IN</i></div>
+    <nav class="navlinks">
+      <button data-go="home">Home</button>
+      <button data-go="lessons">Lessons</button>
+      <button data-go="cheats">Cheat sheet</button>
+      <button data-go="playground">Playground</button>
+      <button data-go="progress">Progress</button>
+      <button data-go="teacher">Studio</button>
+      <button data-go="about">About</button>
+    </nav>
+    <div class="hud">
+      <button class="iconbtn" id="themeBtn" title="Light / dark">🌗</button>
+      <button class="iconbtn" id="paletteBtn" title="Command palette (Ctrl+K)">⌘</button>
+      <div class="chip titlechip" id="titleChip" title="Your current rank"><span id="hudTitle">Beginner</span></div>
+      <div class="chip"><b id="hudXp">0</b><small>XP</small></div>
+      <div class="chip"><b id="hudLvl">1</b><small>Lvl</small></div>
+      <div class="chip"><b id="hudStreak">0</b><small>🔥</small></div>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+<footer>
+  LOCK IN — everything saves to your browser. Nothing leaves your machine. Press <b>Ctrl+K</b> or click <b>⌘</b> to jump around.
+</footer>
+<div id="toast"></div>
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="cmdpal" id="cmdPal">
+  <div class="box">
+    <input id="cmdInput" placeholder="Jump to a lesson, view, or action…" autocomplete="off">
+    <div class="results" id="cmdResults"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   helpers
+   ============================================================ */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function md(t){
+  if(!t) return '';
+  let h = String(t);
+  const blocks = [];
+  h = h.replace(/~~~(\w*)\n([\s\S]*?)~~~/g, (_, lang, code) => {
+    blocks.push('<pre class="code">' + esc(code.replace(/\n$/,'')) + '</pre>');
+    return '\x00B' + (blocks.length-1) + '\x00';
+  });
+  h = esc(h);
+  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+  h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  h = h.split(/\n\n+/).map(p => {
+    p = p.trim();
+    if(!p) return '';
+    if(/^\x00B\d+\x00$/.test(p)) return p;
+    return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+  h = h.replace(/\x00B(\d+)\x00/g, (_, i) => blocks[+i]);
+  return h;
+}
+
+let toastT = null;
+function toast(msg, gold){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.toggle('gold', !!gold);
+  el.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('on'), 2800);
+}
+
+/* ============================================================
+   state
+   ============================================================ */
+const KEY = 'lockin.v5';
+const defaultState = () => ({
+  xp:0, completed:{}, lessonsDone:0, quizTotal:0, quizRight:0,
+  codeDone:0, focusMinutes:0, days:{}, badges:[], custom:[],
+  notes:{}, timeSpent:{}, lastActive:null,
+  hardMode:false, theme:'dark', recent:[],
+  lastTitle:'Beginner', titlesSeen:['Beginner']
+});
+let S = load();
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw) return Object.assign(defaultState(), JSON.parse(raw)); }catch(e){}
+  return defaultState();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+function pushRecent(ic, text){
+  S.recent = S.recent || [];
+  S.recent.unshift({ic, text, when: Date.now()});
+  if(S.recent.length > 40) S.recent.length = 40;
+  save();
+}
+
+const todayKey = () => new Date().toISOString().slice(0,10);
+function addXp(n, why){
+  S.xp += n;
+  const d = todayKey();
+  S.days[d] = (S.days[d]||0) + n;
+  save(); paintHud();
+  if(why) toast('+' + n + ' XP · ' + why);
+}
+const levelOf = xp => Math.floor(Math.sqrt(xp/8)) + 1;
+const xpForLevel = l => Math.pow(l-1,2)*8;
+function streak(){
+  let n = 0; const d = new Date();
+  for(let i = 0; i < 400; i++){
+    const k = d.toISOString().slice(0,10);
+    if(S.days[k]) { n++; d.setDate(d.getDate()-1); } else break;
+  }
+  return n;
+}
+
+/* ============================================================
+   RANKS — titles you unlock as you level up
+   ============================================================ */
+const RANKS = [
+  { min:1,  name:'Beginner',                     em:'🌱', desc:'Just got here. Everyone starts here.' },
+  { min:5,  name:'Learning the Ropes',           em:'📘', desc:'You stopped closing the tab after one error.' },
+  { min:10, name:'Starting to Get Used to It',   em:'🚀', desc:'Syntax is starting to stick. Good sign.' },
+  { min:15, name:'Getting the Hang of It',       em:'💪', desc:'You are not googling every other line now.' },
+  { min:20, name:'Coming Good',                  em:'🎯', desc:'Something clicked. Keep going.' },
+  { min:25, name:'Doing Well',                   em:'⭐', desc:'You actually know what you are doing.' },
+  { min:30, name:'Good Job',                     em:'🏆', desc:'You earned this one.' }
+];
+const MASTER = { min:999, name:'Master Coder', em:'👑', desc:'Every single lesson finished. Fair play.' };
+
+function allLessons(){ return LESSONS.concat(S.custom || []); }
+function isMaster(){
+  const list = allLessons();
+  if(!list.length) return false;
+  return list.every(l => S.completed[l.id]);
+}
+function currentRank(){
+  if(isMaster()) return MASTER;
+  const lvl = levelOf(S.xp);
+  let r = RANKS[0];
+  for(const x of RANKS){ if(lvl >= x.min) r = x; }
+  return r;
+}
+function nextRank(){
+  if(isMaster()) return null;
+  const lvl = levelOf(S.xp);
+  for(const x of RANKS){ if(lvl < x.min) return x; }
+  return null;
+}
+
+function checkRankUp(){
+  const r = currentRank();
+  if(S.lastTitle !== r.name){
+    S.lastTitle = r.name;
+    if(!S.titlesSeen) S.titlesSeen = [];
+    if(!S.titlesSeen.includes(r.name)) S.titlesSeen.push(r.name);
+    save();
+    toast(r.em + ' New rank: ' + r.name, true);
+    pushRecent(r.em, 'Rank unlocked: ' + r.name);
+    paintHud();
+  }
+}
+
+/* ============================================================
+   badges
+   ============================================================ */
+const BADGES = [
+  {id:'first',   ic:'🌱', name:'First step',      desc:'Finish one lesson',                 test:()=>S.lessonsDone>=1},
+  {id:'five',    ic:'📚', name:'Bookworm',        desc:'Finish 5 lessons',                  test:()=>S.lessonsDone>=5},
+  {id:'ten',     ic:'🏛️', name:'Scholar',         desc:'Finish 10 lessons',                 test:()=>S.lessonsDone>=10},
+  {id:'twenty',  ic:'🎓', name:'Halfway',         desc:'Finish 20 lessons',                 test:()=>S.lessonsDone>=20},
+  {id:'all',     ic:'👑', name:'Master Coder',    desc:'Finish every lesson',               test:()=>isMaster()},
+  {id:'py5',     ic:'🐍', name:'Python head',     desc:'Finish 5 Python lessons',           test:()=>Object.keys(S.completed).filter(k=>k.startsWith('py-')).length>=5},
+  {id:'py10',    ic:'🐍', name:'Python veteran',  desc:'Finish 10 Python lessons',          test:()=>Object.keys(S.completed).filter(k=>k.startsWith('py-')).length>=10},
+  {id:'bat3',    ic:'🪟', name:'Batch head',      desc:'Finish 3 Batch lessons',            test:()=>Object.keys(S.completed).filter(k=>k.startsWith('bat-')).length>=3},
+  {id:'bat8',    ic:'🪟', name:'Batch wizard',    desc:'Finish 8 Batch lessons',            test:()=>Object.keys(S.completed).filter(k=>k.startsWith('bat-')).length>=8},
+  {id:'quiz20',  ic:'🎯', name:'Sharp shooter',   desc:'Answer 20 quiz questions',          test:()=>S.quizTotal>=20},
+  {id:'quiz50',  ic:'🎯', name:'Bullseye',        desc:'Answer 50 quiz questions',          test:()=>S.quizTotal>=50},
+  {id:'code10',  ic:'💻', name:'Code runner',     desc:'Complete 10 coding steps',          test:()=>S.codeDone>=10},
+  {id:'code30',  ic:'💻', name:'Machine',         desc:'Complete 30 coding steps',          test:()=>S.codeDone>=30},
+  {id:'focus',   ic:'⏱️', name:'Deep work',       desc:'30 total focus minutes',            test:()=>S.focusMinutes>=30},
+  {id:'focus2',  ic:'⏱️', name:'Locked in',       desc:'2 hours total focus time',          test:()=>S.focusMinutes>=120},
+  {id:'streak3', ic:'🔥', name:'On fire',         desc:'3-day streak',                      test:()=>streak()>=3},
+  {id:'streak7', ic:'🌋', name:'Unstoppable',     desc:'7-day streak',                      test:()=>streak()>=7},
+  {id:'xp500',   ic:'⚡', name:'Power user',      desc:'500 XP',                            test:()=>S.xp>=500},
+  {id:'xp2000',  ic:'⚡', name:'Heavy hitters',   desc:'2000 XP',                           test:()=>S.xp>=2000},
+  {id:'lvl5',    ic:'🥉', name:'Level 5',         desc:'Reach level 5',                     test:()=>levelOf(S.xp)>=5},
+  {id:'lvl10',   ic:'🥈', name:'Level 10',        desc:'Reach level 10',                    test:()=>levelOf(S.xp)>=10},
+  {id:'lvl20',   ic:'🥇', name:'Level 20',        desc:'Reach level 20',                    test:()=>levelOf(S.xp)>=20},
+  {id:'perfect', ic:'💎', name:'Flawless',        desc:'A lesson with zero mistakes',       test:()=>S.badges.includes('perfect')},
+  {id:'builder', ic:'🛠️', name:'Builder',         desc:'Publish a custom lesson',           test:()=>S.custom.length>=1},
+  {id:'notekeeper',ic:'📝', name:'Note taker',    desc:'Write real notes in a lesson',      test:()=>Object.values(S.notes||{}).some(v=>v && v.trim().length>10)},
+  {id:'hard',    ic:'🥷', name:'Hard mode',       desc:'Finish a lesson with hard mode on', test:()=>S.badges.includes('hard')}
+];
+function checkBadges(){
+  BADGES.forEach(b => {
+    if(!S.badges.includes(b.id) && b.test()){
+      S.badges.push(b.id); save();
+      pushRecent('🏅', 'Badge: ' + b.name);
+      toast(b.ic + ' Badge: ' + b.name, true);
+    }
+  });
+}
+
+function paintHud(){
+  $('#hudXp').textContent = S.xp;
+  $('#hudLvl').textContent = levelOf(S.xp);
+  $('#hudStreak').textContent = streak();
+  const r = currentRank();
+  const t = $('#hudTitle');
+  if(t) t.textContent = r.em + ' ' + r.name;
+}
+
+/* ============================================================
+   LESSONS
+   ============================================================ */
+const LESSONS = [
+/* ---------------- PYTHON ---------------- */
+{
+  id:'py-vars', title:'Python: Variables and print()', subject:'Python', level:'Beginner', minutes:8,
+  tags:['python','basics'], desc:'Store a value in a box. Send it to the screen. That is basically the whole job.',
+  steps:[
+    {type:'read', title:'A variable is just a labelled box', body:
+"You put something in a box and give it a name. Later you say the name and Python hands you back the thing.\n\n~~~python\nname = \"Ada\"\nage = 36\n~~~\n\nNo type keyword. Python looks at the value and figures out what kind of thing it is.\n\nTo actually see anything, you need `print()`. A value that just sits in a variable does nothing until you print it or use it somehow.\n\n~~~python\nprint(\"hello\")\nprint(name)\nprint(age)\n~~~"},
+    {type:'quiz', title:'Quick check', q:'Which line creates a variable called score holding 10?',
+     options:['score == 10','10 = score','score = 10','var score = 10'], answer:2,
+     why:'One equals sign assigns. Two compares. And the value always goes on the right.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'x = 5\ny = 3\nprint(x + y)', answer:'8',
+     why:'Python adds the values first and prints the result. 5 + 3 is 8.'},
+    {type:'code', title:'Your turn', lang:'python',
+     prompt:'Make a variable `city` set to `"Tokyo"`, then print it.',
+     starter:'# your code below\n', expect:'Tokyo',
+     hint:'Two lines. First: city = "Tokyo". Second: print(city).'},
+    {type:'type', title:'From memory', prompt:'Type the Python command that prints the word Hello (with double quotes around it).',
+     answer:'print("Hello")', hint:'print(  "Hello"  ) — quotes go inside the brackets.'},
+    {type:'read', title:'One more thing', body:
+"Python cares about capitals. `print` and `Print` are not the same thing. `name` and `Name` are two different variables.\n\nThis catches everybody at least once. When something does not work, check your capitals before you rewrite anything."}
+  ]
+},
+{
+  id:'py-if', title:'Python: Making decisions with if', subject:'Python', level:'Beginner', minutes:9,
+  tags:['python','logic'], desc:'Branch your program. The colon and the indentation are not optional, sorry.',
+  steps:[
+    {type:'read', title:'The if statement', body:
+"Programs need to make choices.\n\n~~~python\ntemp = 30\n\nif temp > 25:\n    print(\"hot\")\nelse:\n    print(\"mild\")\n~~~\n\nThe colon at the end of the if line is required. The 4 spaces in front of print are required. Python uses indentation instead of braces, and it takes that seriously."},
+    {type:'quiz', title:'Quick check', q:'What does `==` mean?',
+     options:['assign a value','compare two values','comment','increase by one'], answer:1,
+     why:'One equals assigns. Two compares. Mixing them up is the number one beginner bug.'},
+    {type:'quiz', title:'Spot the bug', q:'What is wrong with this code?\n\nif x > 5\n    print("big")',
+     options:['Nothing, it is fine','Missing colon after 5','print should be Print','x needs quotes'], answer:1,
+     why:'Python throws a SyntaxError if you forget the colon. Always.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'age = 15\nif age >= 18:\n    print("adult")\nelse:\n    print("minor")', answer:'minor',
+     why:'15 is not >= 18, so it falls into the else branch.'},
+    {type:'code', title:'Write a branch', lang:'python',
+     prompt:'Set `n = 7`. If n is greater than 5, print `big`. Otherwise print `small`.',
+     starter:'n = 7\n', expect:'big',
+     hint:'if n > 5: then print("big") on an indented line, then else: then print("small") indented.'}
+  ]
+},
+{
+  id:'py-loops', title:'Python: Loops', subject:'Python', level:'Intermediate', minutes:10,
+  tags:['python','loops'], desc:'for and while. Stop writing the same line twenty times.',
+  steps:[
+    {type:'read', title:'for loops', body:
+"A for loop runs the same code once for each thing in a sequence.\n\n~~~python\nfor i in range(3):\n    print(i)\n~~~\n\nThat prints 0, 1, 2. Each on its own line. `range(3)` starts at 0 and stops before 3. The off-by-one gets everybody the first time."},
+    {type:'quiz', title:'Quick check', q:'What does `range(1, 4)` produce?',
+     options:['1 2 3 4','1 2 3','0 1 2 3','4'], answer:1,
+     why:'Start at 1, stop before 4. So 1, 2, 3.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'total = 0\nfor i in range(1, 4):\n    total = total + i\nprint(total)', answer:'6',
+     why:'The loop adds 1, then 2, then 3. Final total is 6.'},
+    {type:'code', title:'Loop it', lang:'python',
+     prompt:'Print the numbers 1 through 5, each on its own line.',
+     starter:'', expect:'1\n2\n3\n4\n5',
+     hint:'for i in range(1, 6):  then  print(i)'},
+    {type:'read', title:'while loops', body:
+"A while loop runs as long as a condition stays true.\n\n~~~python\ncount = 0\nwhile count < 3:\n    print(count)\n    count = count + 1\n~~~\n\nIf you forget to change `count` inside the loop, it never ends and you have to kill the terminal. Everybody does it once. Then they never do it again."}
+  ]
+},
+{
+  id:'py-lists', title:'Python: Lists', subject:'Python', level:'Intermediate', minutes:10,
+  tags:['python','data'], desc:'Many values in one variable. Indexes start at zero, which you will forget.',
+  steps:[
+    {type:'read', title:'Lists hold many things', body:
+"A list is an ordered collection. Square brackets.\n\n~~~python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[0])\nprint(len(fruits))\n~~~\n\nIndex 0 is the first item. `len()` tells you how many things are in there."},
+    {type:'quiz', title:'Quick check', q:'Given `nums = [10, 20, 30]`, what is `nums[1]`?',
+     options:['10','20','30','1'], answer:1,
+     why:'Index 0 is 10. Index 1 is 20. Off-by-one again.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'colors = ["red", "green"]\ncolors.append("blue")\nprint(len(colors))', answer:'3',
+     why:'append adds to the end. The list now has three items.'},
+    {type:'code', title:'Loop a list', lang:'python',
+     prompt:'Given `nums = [2, 4, 6]`, print each number doubled, one per line.',
+     starter:'nums = [2, 4, 6]\n', expect:'4\n8\n12',
+     hint:'for n in nums: then print(n * 2)'}
+  ]
+},
+{
+  id:'py-list-methods', title:'Python: More list tricks', subject:'Python', level:'Intermediate', minutes:9,
+  tags:['python','lists'], desc:'Negative indexes, sorted copies, and the fact that some methods change the list and some do not.',
+  steps:[
+    {type:'read', title:'Negative indexes and sorted', body:
+"You can count from the end with negative numbers.\n\n~~~python\nnums = [3, 1, 2]\nprint(nums[-1])          # 2 (the last item)\nprint(nums[-2])          # 1 (second from the end)\n~~~\n\n`sorted()` hands you back a new list, sorted. The original stays the way it was.\n\n~~~python\nprint(sorted(nums))      # [1, 2, 3]\nprint(nums)              # [3, 1, 2]  - unchanged\n~~~\n\nIf you want to sort in place, use `nums.sort()` with no assignment. That one does change the list."},
+    {type:'quiz', title:'Quick check', q:'Given `nums = [5, 10, 15]`, what is `nums[-1]`?',
+     options:['5','10','15','-1'], answer:2,
+     why:'Negative indexes count from the end. -1 is the last item.'},
+    {type:'quiz', title:'Quick check', q:'What is the difference between `sorted(nums)` and `nums.sort()`?',
+     options:['No difference','sorted makes a new list, sort changes the original','sorted is faster','sort only works on numbers'], answer:1,
+     why:'sorted returns a new list. .sort() sorts in place and returns None.'},
+    {type:'code', title:'Try it', lang:'python',
+     prompt:'Given `nums = [5, 10]`, append 15 then print the item at index 2.',
+     starter:'nums = [5, 10]\n', expect:'15',
+     hint:'nums.append(15) then print(nums[2])'}
+  ]
+},
+{
+  id:'py-func', title:'Python: Functions', subject:'Python', level:'Intermediate', minutes:10,
+  tags:['python','functions'], desc:'Wrap logic in a name so you can run it whenever you want.',
+  steps:[
+    {type:'read', title:'def', body:
+"~~~python\ndef greet(name):\n    return \"Hello \" + name\n\nprint(greet(\"Ada\"))\n~~~\n\nThe body is indented. `return` sends a value back. If you forget `return`, the function gives back `None` and you will spend twenty minutes wondering why your output is empty."},
+    {type:'quiz', title:'Quick check', q:'What does a Python function return if it has no return statement?',
+     options:['0','""','None','It errors'], answer:2,
+     why:'Python silently returns None. Very easy to miss.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'def square(n):\n    return n * n\n\nprint(square(4))', answer:'16',
+     why:'4 times 4 is 16.'},
+    {type:'code', title:'Write a function', lang:'python',
+     prompt:'Define `def double(x)` returning x * 2, then print `double(9)`.',
+     starter:'', expect:'18',
+     hint:'def double(x): then return x * 2, then print(double(9))'}
+  ]
+},
+{
+  id:'py-dict', title:'Python: Dictionaries', subject:'Python', level:'Intermediate', minutes:10,
+  tags:['python','data'], desc:'Store things by name instead of by position. Much easier to read later.',
+  steps:[
+    {type:'read', title:'Key value pairs', body:
+"A dict stores values under names. You use curly braces.\n\n~~~python\nperson = {\"name\": \"Ada\", \"age\": 36}\nprint(person[\"name\"])\n~~~\n\nYou look things up by the key, not by an index. So `person[\"name\"]` not `person[0]`.\n\nTo add a new key or change an existing one, just assign to it.\n\n~~~python\nperson[\"city\"] = \"London\"\n~~~\n\n`len()` works here too. It gives you how many keys there are."},
+    {type:'quiz', title:'Quick check', q:'Given `person = {"name": "Ada"}`, how do you get the name?',
+     options:['person.name','person[0]','person["name"]','person.name()'], answer:2,
+     why:'Dicts use square brackets with the key inside. Dots are for methods.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'person = {"a": 1, "b": 2}\nperson["c"] = 3\nprint(len(person))', answer:'3',
+     why:'Assigning to a new key adds it. So now there are three keys.'},
+    {type:'code', title:'Make a dict', lang:'python',
+     prompt:'Create `d` with keys `x` set to 10 and `y` set to 20. Then print `d["x"]`.',
+     starter:'', expect:'10',
+     hint:'d = {"x": 10, "y": 20}  then  print(d["x"])'},
+    {type:'type', title:'From memory', prompt:'Type the shortcut for reading the value under key "name" from a dict called `person`.',
+     answer:'person["name"]', hint:'Square brackets with the key inside. Quotes around the key.'}
+  ]
+},
+{
+  id:'py-str', title:'Python: String methods', subject:'Python', level:'Intermediate', minutes:9,
+  tags:['python','strings'], desc:'Strings come with built-in tools. Learn six of them and you will use them forever.',
+  steps:[
+    {type:'read', title:'Methods on strings', body:
+"Strings have built in methods. You call them with a dot.\n\n~~~python\nname = \"Ada\"\nprint(name.upper())     # ADA\nprint(name.lower())     # ada\nprint(len(name))        # 3\n~~~\n\n`upper()` and `lower()` make a new string. They do not change the original.\n\nSplitting is handy for turning a sentence into words.\n\n~~~python\nprint(\"hello world\".split())   # [\"hello\", \"world\"]\n~~~"},
+    {type:'read', title:'f-strings', body:
+"Put an `f` in front of the quotes and you can drop variables right in.\n\n~~~python\nname = \"Ada\"\nage = 36\nprint(f\"{name} is {age}\")\n~~~\n\nThat prints `Ada is 36`. It is the easiest way to build strings from variables. Much cleaner than gluing with `+`."},
+    {type:'quiz', title:'Quick check', q:'What does `"hello".upper()` give?',
+     options:['"hello"','"HELLO"','"Hello"','error'], answer:1,
+     why:'upper() makes a new all-caps string.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'name = "Ada"\nage = 36\nprint(f"{name} is {age}")', answer:'Ada is 36',
+     why:'The f-string drops the variables in where the braces are.'},
+    {type:'code', title:'Write it', lang:'python',
+     prompt:'Print `"PYTHON".lower()`.',
+     starter:'', expect:'python',
+     hint:'print("PYTHON".lower())'}
+  ]
+},
+{
+  id:'py-bool', title:'Python: Booleans and logic', subject:'Python', level:'Intermediate', minutes:9,
+  tags:['python','logic'], desc:'True or False. The building blocks of every if statement you will ever write.',
+  steps:[
+    {type:'read', title:'True, False, and comparisons', body:
+"Booleans are `True` and `False`. Capital first letter.\n\nComparisons give you a boolean:\n\n~~~python\nx = 5\nprint(x > 3)     # True\nprint(x < 3)     # False\nprint(x == 5)    # True\nprint(x != 5)    # False\n~~~\n\nYou chain them with `and` and `or`.\n\n~~~python\nif x > 0 and x < 10:\n    print(\"in range\")\n~~~"},
+    {type:'quiz', title:'Quick check', q:'What does `5 == 5` give you?',
+     options:['1','True','"yes"','5'], answer:1,
+     why:'Comparisons give you True or False. Not 1 and 0.'},
+    {type:'predict', title:'What does this print?', lang:'python',
+     code:'x = 7\nprint(x > 5)', answer:'True',
+     why:'7 is greater than 5, so it is True.'},
+    {type:'quiz', title:'Quick check', q:'What does `and` need to give you True?',
+     options:['one side True','both sides True','neither side True','it always gives True'], answer:1,
+     why:'and needs both. or needs one.'},
+    {type:'code', title:'Try it', lang:'python',
+     prompt:'Set `age = 20`. Print the result of `age > 18`.',
+     starter:'', expect:'True',
+     hint:'age = 20 then print(age > 18)'}
+  ]
+},
+
+/* ---------------- BATCH ---------------- */
+{
+  id:'bat-1', title:'Batch: Your first .bat file', subject:'Batch', level:'Beginner', minutes:8,
+  tags:['batch','windows'], desc:'A text file full of Windows commands. Double click it and it runs.',
+  steps:[
+    {type:'read', title:'What a .bat file actually is', body:
+"A batch file is a plain text file saved with a `.bat` extension. Windows reads it line by line and runs each line as a command. That is the whole idea.\n\n~~~bat\n@echo off\necho Hello, world!\npause\n~~~\n\nSave that as `hello.bat` and double click it.\n\n- `@echo off` hides the commands themselves. Without it, Windows prints every line before running it and the output looks like a mess.\n- `echo` prints text.\n- `pause` waits for a key press. Without it the window closes instantly and you never see your output. This one catches everybody."},
+    {type:'quiz', title:'Quick check', q:'What does `@echo off` do?',
+     options:['shuts down the PC','hides the commands from being printed','clears the screen','deletes the file'], answer:1,
+     why:'It stops Windows printing each command before running it. It does not affect your output.'},
+    {type:'code', title:'Write it', lang:'bat',
+     prompt:'Print `LOCKED IN` using echo.',
+     starter:'@echo off\n', expect:'LOCKED IN',
+     hint:'echo LOCKED IN'},
+    {type:'read', title:'Variables', body:
+"Use `set` to make one. Reference it with percent signs on both sides.\n\n~~~bat\nset name=Ada\necho Hello %name%\n~~~\n\nOne annoying gotcha: **no spaces around the equals sign**. `set name = Ada` sets a variable called `name ` (with a trailing space) to ` Ada` (with a leading space). Then your echo prints something weird and you have no idea why."},
+    {type:'quiz', title:'Quick check', q:'How do you print the value of a variable called `user`?',
+     options:['echo user','echo $user','echo %user%','print(user)'], answer:2,
+     why:'Percent signs on both sides. Dollar signs are for other shells.'}
+  ]
+},
+{
+  id:'bat-2', title:'Batch: Asking for input', subject:'Batch', level:'Beginner', minutes:9,
+  tags:['batch','windows'], desc:'Prompt the user, then do something based on what they typed.',
+  steps:[
+    {type:'read', title:'set /p', body:
+"`set /p` shows a prompt and stores whatever the user types.\n\n~~~bat\n@echo off\nset /p name=What is your name? \necho Hello, %name%!\n~~~\n\nNotice the trailing space after the question mark. That is on purpose. It separates your prompt from where the user starts typing."},
+    {type:'read', title:'Deciding on the answer', body:
+"~~~bat\nif \"%name%\"==\"Ada\" echo Great name!\n~~~\n\nQuotes around the variable stop errors when it is empty or has spaces in it. Get in the habit."},
+    {type:'quiz', title:'Quick check', q:'Which command asks the user for input?',
+     options:['echo','set /p','input','read'], answer:1,
+     why:'set /p prompts and stores. echo just prints.'},
+    {type:'predict', title:'What does this print?', lang:'bat',
+     code:'@echo off\nset x=5\nif %x%==5 echo match', answer:'match',
+     why:'x is 5, so the condition is true and echo runs.'},
+    {type:'code', title:'Write it', lang:'bat',
+     prompt:'Set `mode=fast`. If mode equals fast, print `ZOOM`.',
+     starter:'@echo off\n', expect:'ZOOM',
+     hint:'set mode=fast  then  if "%mode%"=="fast" echo ZOOM'}
+  ]
+},
+{
+  id:'bat-3', title:'Batch: Numbers with set /a', subject:'Batch', level:'Intermediate', minutes:10,
+  tags:['batch','windows','math'], desc:'Batch can do arithmetic. Whole numbers only, and there is a weird percent thing.',
+  steps:[
+    {type:'read', title:'set /a', body:
+"Plain `set` treats everything as text. `set /a` does math.\n\n~~~bat\nset /a x=5+3\necho %x%\n~~~\n\nOutput is `8`.\n\nYou can use `+ - * /` and `%` for remainder.\n\n~~~bat\nset /a r=17 %% 5\n~~~\n\nThat prints `2`. Notice the double percent. In a batch file one `%` means \"expand a variable\", so a literal percent sign has to be doubled. Yes that is annoying. Yes everybody complains about it."},
+    {type:'quiz', title:'Quick check', q:'What is the difference between `set x=5+3` and `set /a x=5+3`?',
+     options:['No difference','The first stores the text "5+3", the second stores 8','The second crashes','The first is faster'], answer:1,
+     why:'Plain set treats everything as a string. Only set /a evaluates the math.'},
+    {type:'read', title:'Comparing numbers', body:
+"Comparison operators in batch are words, not symbols.\n\n- `equ` equal\n- `neq` not equal\n- `lss` less than\n- `leq` less than or equal\n- `gtr` greater than\n- `geq` greater than or equal\n\n~~~bat\nset /a n=10\nif %n% gtr 5 echo big\nif %n% lss 20 echo small enough\n~~~\n\nWhy words? Because `>` and `<` are redirection operators in batch. If you wrote `if %n% > 5`, batch would try to write your output to a file called `5`. Not what you wanted."},
+    {type:'quiz', title:'Quick check', q:'Which operator means "greater than" in a batch if?',
+     options:['>','gt','gtr','GREATER'], answer:2,
+     why:'> is redirect. The word form is gtr.'},
+    {type:'code', title:'Do some math', lang:'bat',
+     prompt:'Use `set /a` to set `total` to 7 times 6, then echo it.',
+     starter:'@echo off\n', expect:'42',
+     hint:'set /a total=7*6  then  echo %total%'}
+  ]
+},
+{
+  id:'bat-4', title:'Batch: goto and menu scripts', subject:'Batch', level:'Intermediate', minutes:11,
+  tags:['batch','windows','menu'], desc:'Labels, goto, and building the classic numbered menu.',
+  steps:[
+    {type:'read', title:'Labels and goto', body:
+"A label is a line that starts with a colon. `goto` jumps to it.\n\n~~~bat\n@echo off\ngoto :skip\necho this never runs\n:skip\necho we landed here\n~~~\n\nOutput is just `we landed here`. The goto skipped over the echo in between."},
+    {type:'read', title:'A menu', body:
+"This is the shape of almost every batch menu you have ever clicked through.\n\n~~~bat\n@echo off\n:menu\ncls\necho 1. Say hello\necho 2. Say goodbye\necho 3. Quit\nset /p choice=Pick one: \n\nif \"%choice%\"==\"1\" goto :hello\nif \"%choice%\"==\"2\" goto :bye\nif \"%choice%\"==\"3\" exit /b\ngoto :menu\n\n:hello\necho Hello!\npause\ngoto :menu\n\n:bye\necho Goodbye!\npause\ngoto :menu\n~~~\n\nThe `goto :menu` at the end of each branch sends you back to the top. Without it the script falls through and runs every branch below, which is not what you want."},
+    {type:'quiz', title:'Quick check', q:'What does `goto :menu` do?',
+     options:['exits the script','jumps to the line labelled :menu','prints "menu"','deletes the label'], answer:1,
+     why:'goto jumps to a label. The label has to exist or batch errors out.'},
+    {type:'quiz', title:'Quick check', q:'Why put `goto :menu` at the end of each branch?',
+     options:['to make it faster','so the script loops back to the menu instead of falling through','it is required syntax','to close the file'], answer:1,
+     why:'Without it, the script keeps going down the file and runs every branch below.'},
+    {type:'code', title:'Write a jump', lang:'bat',
+     prompt:'Skip over an echo using goto. Only print `landed`.',
+     starter:'@echo off\n', expect:'landed',
+     hint:'goto :skip / echo not this / :skip / echo landed'}
+  ]
+},
+{
+  id:'bat-5', title:'Batch: Files and folders', subject:'Batch', level:'Intermediate', minutes:11,
+  tags:['batch','windows','files'], desc:'Copy, move, delete. And check first so you do not blow anything up.',
+  steps:[
+    {type:'read', title:'The usual suspects', body:
+"Common file commands:\n\n~~~\nmkdir name        make a folder\nrmdir name        remove an empty folder\ndel file.txt      delete a file\ncopy a.txt b.txt  copy\nmove a.txt ..     move\nren a.txt b.txt   rename\n~~~\n\nA few things to know:\n\n- `del` does not ask for confirmation. It is gone.\n- `copy` and `move` will ask \"overwrite?\" if the target exists. Add `/y` to auto yes.\n- `rmdir` refuses to delete a folder with stuff in it. `rmdir /s /q` will. Be careful."},
+    {type:'read', title:'Check first', body:
+"Before you delete or overwrite, check it exists.\n\n~~~bat\nif exist report.txt (\n    echo Found it\n) else (\n    echo No report.txt here\n)\n~~~\n\nAnd with not:\n\n~~~bat\nif not exist backup mkdir backup\n~~~\n\nThat one makes the folder only if it is missing. Safe to run twice. Safe to run a hundred times."},
+    {type:'quiz', title:'Quick check', q:'What does `if not exist backup mkdir backup` do?',
+     options:['always creates the folder','errors if the folder exists','creates the folder only if it is missing','deletes the folder'], answer:2,
+     why:'Not exist means it is missing, so make it. Safe to run repeatedly.'},
+    {type:'quiz', title:'Quick check', q:'Why add `/y` to a copy command?',
+     options:['it is faster','to skip the "overwrite?" prompt','to make a backup','it means yes to everything'], answer:1,
+     why:'Without /y, copy prompts if the target exists. With /y it just overwrites.'},
+    {type:'read', title:'A safe backup snippet', body:
+"~~~bat\nset src=notes.txt\nset dst=backup\\notes.bak\n\nif not exist backup mkdir backup\nif exist %src% copy %src% %dst% /y\n~~~\n\nRun it once, it makes the folder and copies the file. Run it again, it just overwrites the backup. Nothing breaks if the file is missing."}
+  ]
+},
+{
+  id:'bat-6', title:'Batch: for loops (the %% thing)', subject:'Batch', level:'Advanced', minutes:12,
+  tags:['batch','windows','loops'], desc:'The loop syntax everybody hates. Once you learn it, it is fine.',
+  steps:[
+    {type:'read', title:'Why %%', body:
+"In a batch file, loop variables use double percent signs. Reason: Windows already uses single `%` for variables.\n\n~~~bat\nfor %%i in (a b c) do echo %%i\n~~~\n\nPrints a, then b, then c.\n\nImportant gotcha: if you run this directly in the Command Prompt (not in a .bat file), you use single %:\n\n~~~\nfor %i in (a b c) do echo %i\n~~~\n\nIn a .bat file you must double it. It is inconsistent and everybody agrees it is annoying."},
+    {type:'quiz', title:'Quick check', q:'In a .bat file, how many % do you put before the loop variable?',
+     options:['one','two','three','none'], answer:1,
+     why:'Two in a .bat file. One if you type it straight into cmd.'},
+    {type:'read', title:'Counting loops', body:
+"For a numbered range, use `/l` (lowercase L, not a one):\n\n~~~bat\nfor /l %%i in (1,1,5) do echo %%i\n~~~\n\nThe three numbers are start, step, end. Start at 1, add 1 each time, stop at 5. Output is 1 2 3 4 5."},
+    {type:'quiz', title:'Quick check', q:'What does `for /l %%i in (1,2,7)` produce?',
+     options:['1 2 3 4 5 6 7','1 3 5 7','1 7','2 4 6'], answer:1,
+     why:'Start at 1, add 2 each time, stop at 7. So 1, 3, 5, 7.'},
+    {type:'read', title:'Looping over files', body:
+"This is the useful one. Loop over every file matching a pattern.\n\n~~~bat\nfor %%f in (*.txt) do echo Found: %%f\n~~~\n\nTo actually do something with each file:\n\n~~~bat\nfor %%f in (*.txt) do ren \"%%f\" \"%%~nf.bak\"\n~~~\n\n`%%~nf` means \"the filename without the extension\". So `report.txt` becomes `report.bak`. Run that in a folder of .txt files and they all get renamed at once. Useful once, dangerous if you mistype the pattern."},
+    {type:'quiz', title:'Quick check', q:'What does `%%~nf` give you?',
+     options:['the full path','just the filename without extension','the file size','the folder'], answer:1,
+     why:'The tilde-f modifier strips the extension.'}
+  ]
+},
+{
+  id:'bat-7', title:'Batch: Error levels and && ||', subject:'Batch', level:'Advanced', minutes:10,
+  tags:['batch','windows','errors'], desc:'Find out whether the last command actually worked.',
+  steps:[
+    {type:'read', title:'%errorlevel%', body:
+"Every command sets an error level when it finishes. `0` means success. Anything else means something went wrong.\n\n~~~bat\ncopy missing.txt dest\\\necho Error level: %errorlevel%\n~~~\n\nIf `missing.txt` does not exist you get a nonzero error level. Common values: 1 means file not found, 2 means access denied.\n\nYou have to check it right after the command. Any other command resets it."},
+    {type:'quiz', title:'Quick check', q:'What does error level 0 usually mean?',
+     options:['catastrophic failure','success','warning','unknown'], answer:1,
+     why:'Zero is success. Everything else is a kind of failure.'},
+    {type:'read', title:'&& and ||', body:
+"These chain on success or failure without you checking errorlevel manually.\n\n- `&&` runs the next command only if the previous one succeeded\n- `||` runs the next command only if the previous one failed\n\n~~~bat\ncopy a.txt b.txt && echo copied fine || echo copy failed\n~~~\n\nOne line. Prints \"copied fine\" on success, \"copy failed\" on failure. Really handy when your script needs to keep going either way."},
+    {type:'quiz', title:'Quick check', q:'What does `||` do?',
+     options:['means "or" in a boolean','runs the next command if the previous one failed','runs both commands','splits the script'], answer:1,
+     why:'The double pipe is the "on failure" operator.'},
+    {type:'predict', title:'What does this print?', lang:'bat',
+     code:'@echo off\nif exist definitely_missing.xyz (echo found) else (echo missing)', answer:'missing',
+     why:'The file does not exist, so the else branch runs.'}
+  ]
+},
+{
+  id:'bat-8', title:'Batch: Build a real backup tool', subject:'Batch', level:'Advanced', minutes:14,
+  tags:['batch','windows','project'], desc:'Put everything together. A script you can actually use.',
+  steps:[
+    {type:'read', title:'What we are building', body:
+"A `backup.bat` that:\n\n1. Makes a `backup` folder if it is missing\n2. Copies every `.txt` file from the current folder into it with a `.bak` extension\n3. Reports how many files it copied\n4. Waits for a key press at the end\n\nWe will build it in pieces."},
+    {type:'read', title:'The pieces you already know', body:
+"- `if not exist` to check the folder\n- `mkdir` to make it\n- `for %%f in (*.txt) do` to loop\n- `copy` with `/y`\n- `set /a` for the counter\n- `pause` at the end\n\nEverything below is just putting those in the right order."},
+    {type:'read', title:'The script', body:
+"~~~bat\n@echo off\nsetlocal\n\nset count=0\nif not exist backup mkdir backup\n\nfor %%f in (*.txt) do (\n    copy \"%%f\" \"backup\\%%~nf.bak\" /y >nul\n    set /a count+=1\n)\n\necho Backed up %count% file(s).\npause\n~~~\n\nA few details:\n\n- `setlocal` keeps the variables from leaking into the parent shell.\n- `>nul` throws away the copy command output so your own echo is clean.\n- `set /a count+=1` increments by one. That shorthand works with set /a."},
+    {type:'quiz', title:'Quick check', q:'What does `>nul` do at the end of a command?',
+     options:['redirects output to a file called nul','throws the output away','crashes','prints "nul"'], answer:1,
+     why:'nul is the Windows black hole. Anything written there disappears.'},
+    {type:'quiz', title:'Quick check', q:'What does `setlocal` do?',
+     options:['starts a local network','keeps variables from leaking into the parent shell','locks the file','makes the script local only'], answer:1,
+     why:'It makes a scope. When the script ends the variables go away.'},
+    {type:'code', title:'Small piece', lang:'bat',
+     prompt:'Make `backup` folder only if it does not exist, then print `ready`.',
+     starter:'@echo off\n', expect:'ready',
+     hint:'if not exist backup mkdir backup  then  echo ready'},
+    {type:'read', title:'Done', body:
+"That is a real script. Drop it in any folder full of `.txt` files, double click it, it backs them up.\n\nTo run it on a schedule, add it to Task Scheduler. To run it on a whole folder tree, swap `(*.txt)` for a recursive loop with `/r`.\n\nYou now know enough batch to automate something annoying in your own life. That was the whole point."}
+  ]
+},
+{
+  id:'bat-9', title:'Batch: Substrings and replace', subject:'Batch', level:'Advanced', minutes:10,
+  tags:['batch','windows','strings'], desc:'Cut pieces out of a string, or swap one bit for another. The syntax is weird but it works.',
+  steps:[
+    {type:'read', title:'Cutting a string up', body:
+"Batch slices strings with a modifier on the variable name.\n\n~~~bat\nset name=HelloWorld\necho %name:~0,5%     REM Hello  (first 5 characters)\necho %name:~5%       REM World  (from position 5 to the end)\necho %name:~0,-3%    REM HelloWo  (everything except last 3)\n~~~\n\nThe syntax is `%varname:~start,length%`. The length is optional. If you put a negative number for length, it counts from the end."},
+    {type:'quiz', title:'Quick check', q:'If `name=HelloWorld`, what does `%name:~0,3%` give?',
+     options:['Hello','Hel','World','H'], answer:1,
+     why:'Start at 0, take 3 characters. That gives Hel.'},
+    {type:'read', title:'Replacing text', body:
+"~~~bat\nset msg=Hello World\necho %msg:World=There%\n~~~\n\nThat prints `Hello There`. The syntax is `%varname:find=replace%`.\n\nTo delete a substring entirely, leave the replace side empty:\n\n~~~bat\nset msg=Hello World\necho %msg: =%\n~~~\n\nThat gives `HelloWorld` — the space was removed."},
+    {type:'quiz', title:'Quick check', q:'What does `%msg:a=A%` do?',
+     options:['adds an A','replaces every "a" with "A"','checks if a is in msg','uppercases msg'], answer:1,
+     why:'The find and replace syntax. Find on the left of the =, replace on the right.'},
+    {type:'code', title:'Slice it', lang:'bat',
+     prompt:'Set `word=HelloWorld`. Print the first 3 characters.',
+     starter:'@echo off\n', expect:'Hel',
+     hint:'set word=HelloWorld  then  echo %word:~0,3%'}
+  ]
+},
+{
+  id:'bat-10', title:'Batch: Delayed expansion (!var!)', subject:'Batch', level:'Advanced', minutes:11,
+  tags:['batch','windows','gotcha'], desc:'The famous batch gotcha. If your counter always says 0 inside a loop, this is why.',
+  steps:[
+    {type:'read', title:'The problem', body:
+"Inside a `for` loop or an `if` block, `%var%` gets expanded once when the whole block is parsed, not at each step.\n\n~~~bat\nset count=0\nfor /l %%i in (1,1,3) do (\n    set /a count+=1\n    echo %count%\n)\n~~~\n\nThat prints 0 three times. Not 1 2 3. The `%count%` was replaced with `0` before the loop even started, because at that moment count was 0.\n\nThis catches literally everyone."},
+    {type:'quiz', title:'Quick check', q:'Why does `%count%` inside a for loop print the same value each time?',
+     options:['batch is broken','%var% is expanded once when the block is parsed','count is not set','you need quotes'], answer:1,
+     why:'Percent-variables expand at parse time. That is the whole problem.'},
+    {type:'read', title:'The fix', body:
+"Add `setlocal enabledelayedexpansion` at the top of the script. Then use `!var!` instead of `%var%` inside loops.\n\n~~~bat\n@echo off\nsetlocal enabledelayedexpansion\nset count=0\nfor /l %%i in (1,1,3) do (\n    set /a count+=1\n    echo !count!\n)\n~~~\n\nThat prints 1, 2, 3. The `!` syntax expands at runtime, so it picks up the current value."},
+    {type:'quiz', title:'Quick check', q:'What must be at the top of the script for `!var!` to work?',
+     options:['@echo off','setlocal enabledelayedexpansion','pause','cls'], answer:1,
+     why:'Without it, ! is just a regular character and nothing expands.'},
+    {type:'quiz', title:'Quick check', q:'What is the difference between `%count%` and `!count!`?',
+     options:['no difference','% is parse time, ! is runtime','! is deprecated','! works everywhere'], answer:1,
+     why:'% expands once at parse time. ! expands each time the line runs.'},
+    {type:'read', title:'When to use which', body:
+"Rule of thumb: use `%var%` at the top level of the script. Use `!var!` inside loops or parenthesised blocks.\n\nMixing them is fine — a script can use % in one place and ! in another. Just remember that % will not see changes made earlier in the same block."}
+  ]
+},
+{
+  id:'bat-11', title:'Batch: Redirects and pipes', subject:'Batch', level:'Advanced', minutes:10,
+  tags:['batch','windows','redirects'], desc:'Send output to a file, throw it away, or hand it to another command.',
+  steps:[
+    {type:'read', title:'Redirects', body:
+"By default commands print to the screen. Redirects send it somewhere else.\n\n~~~\ndir > files.txt       write output to a file (overwrites)\ndir >> files.txt      append instead of overwrite\ncopy a.txt b.txt 2> err.txt   send error output to a file\ndir >nul              throw output away entirely\n~~~\n\nQuick reference:\n\n- `>` output, overwrite\n- `>>` output, append\n- `2>` error output\n- `>nul` trash\n- `<` input from a file"},
+    {type:'quiz', title:'Quick check', q:'What does `>>` do?',
+     options:['overwrites a file','appends to a file','reads from a file','deletes a file'], answer:1,
+     why:'Single > overwrites. Double >> adds to the end.'},
+    {type:'quiz', title:'Quick check', q:'What does `2>` redirect?',
+     options:['standard output','error output','input','both at once'], answer:1,
+     why:'The 2 refers to stderr. Success output is 1.'},
+    {type:'read', title:'Pipes', body:
+"A pipe `|` sends the output of one command straight into another.\n\n~~~\ndir | find \"txt\"\ntype log.txt | more\n~~~\n\nThe first one lists the directory, then only shows the lines containing \"txt\". The second shows a file one screenful at a time.\n\nYou can also chain redirects:\n\n~~~\ncopy a.txt b.txt >nul 2>&1\n~~~\n\nThat copies quietly and throws away both normal and error output. `2>&1` means \"send error output to the same place as normal output\" — which is nul here."},
+    {type:'quiz', title:'Quick check', q:'What does `|` do?',
+     options:['means "or"','sends output of one command to the input of the next','splits lines','creates a file'], answer:1,
+     why:'It is a pipe. Left command writes, right command reads.'},
+    {type:'code', title:'Quiet copy', lang:'bat',
+     prompt:'Copy `a.txt` to `b.txt` with `/y` and throw away the output. Then echo `done`.',
+     starter:'@echo off\n', expect:'done',
+     hint:'copy a.txt b.txt /y >nul  then  echo done'}
+  ]
+},
+{
+  id:'bat-12', title:'Batch: Environment variables', subject:'Batch', level:'Advanced', minutes:10,
+  tags:['batch','windows','env'], desc:'Windows has a pile of variables already set. Learn what is in them.',
+  steps:[
+    {type:'read', title:'The free ones', body:
+"Windows sets a bunch of environment variables you can just read.\n\n~~~\necho %USERNAME%      your login name\necho %USERPROFILE%   your user folder, like C:\\Users\\You\necho %CD%            the current directory\necho %PATH%          where Windows looks for programs\necho %DATE% %TIME%   current date and time\necho %COMPUTERNAME%  the machine name\necho %TEMP%          temp folder path\n~~~\n\nHandy for scripts that need to know where the user is or what day it is."},
+    {type:'quiz', title:'Quick check', q:'Which one shows your current folder?',
+     options:['%USERNAME%','%CD%','%PATH%','%DATE%'], answer:1,
+     why:'CD = current directory. If you cd somewhere, %CD% updates.'},
+    {type:'read', title:'set vs setx', body:
+"~~~bat\nset MYVAR=hello      sets it for this session only\nsetx MYVAR hello     sets it permanently\n~~~\n\n`setx` writes the value to the registry. It survives closing the terminal and rebooting. The downside: `setx` does NOT affect the current session — you have to open a new window to see it.\n\nQuick rule: use `set` in scripts. Use `setx` when you are setting something up for good."},
+    {type:'quiz', title:'Quick check', q:'What is the difference between `set` and `setx`?',
+     options:['no difference','setx persists across reboots','set is for numbers only','setx is faster'], answer:1,
+     why:'set is for the current session. setx writes it permanently.'},
+    {type:'quiz', title:'Quick check', q:'After you run `setx MYVAR hello`, why does `echo %MYVAR%` still say nothing in the current window?',
+     options:['setx is broken','setx writes to the registry, not the current session','you spelled it wrong','you need admin'], answer:1,
+     why:'The current shell does not pick up the change. Open a new window and it will.'},
+    {type:'read', title:'Using them in a script', body:
+"~~~bat\n@echo off\necho Running as %USERNAME% on %COMPUTERNAME%\necho Working in %CD%\nif exist \"%USERPROFILE%\\Desktop\" echo Desktop found\npause\n~~~\n\nThat is a quick way to log who ran the script and where. Throw it in the header of any tool you build for other people."}
+  ]
+},
+{
+  id:'bat-13', title:'Batch: Build a file organiser', subject:'Batch', level:'Advanced', minutes:15,
+  tags:['batch','windows','project'], desc:'The final project. Sort a messy folder into subfolders by file type.',
+  steps:[
+    {type:'read', title:'What we are building', body:
+"A `tidy.bat` that sorts loose files in the current folder into subfolders.\n\n- `.jpg`, `.png`, `.gif` go into `images\\`\n- `.txt`, `.md`, `.pdf` go into `docs\\`\n- `.zip`, `.rar`, `.7z` go into `archives\\`\n- Anything else goes into `other\\`\n\nSame shape as the backup tool but with more branches."},
+    {type:'read', title:'The skeleton', body:
+"~~~bat\n@echo off\nsetlocal\n\nif not exist images mkdir images\nif not exist docs mkdir docs\nif not exist archives mkdir archives\nif not exist other mkdir other\n\necho Tidying up...\n~~~\n\nThe four `if not exist` lines make sure each folder is there before we start moving things. Safe to run twice."},
+    {type:'read', title:'The move loops', body:
+"~~~bat\nfor %%f in (*.jpg *.png *.gif) do move \"%%f\" images\\ >nul 2>nul\nfor %%f in (*.txt *.md *.pdf) do move \"%%f\" docs\\ >nul 2>nul\nfor %%f in (*.zip *.rar *.7z) do move \"%%f\" archives\\ >nul 2>nul\n~~~\n\nEach `for` loop matches a set of extensions. `move` sends them to the right folder. `>nul 2>nul` hides both the normal output and any errors (like \"file already there\").\n\nThe tricky part is `other\\` — you want files that are not in the previous groups. Batch makes this annoying. One approach:\n\n~~~bat\nfor %%f in (*.*) do (\n    if not \"%%~xf\"==\".jpg\" if not \"%%~xf\"==\".png\" if not \"%%~xf\"==\".gif\" if not \"%%~xf\"==\".txt\" if not \"%%~xf\"==\".md\" if not \"%%~xf\"==\".pdf\" if not \"%%~xf\"==\".zip\" if not \"%%~xf\"==\".rar\" if not \"%%~xf\"==\".7z\" move \"%%f\" other\\ >nul 2>nul\n)\n~~~\n\nUgly but it works. `%%~xf` is the extension including the dot."},
+    {type:'quiz', title:'Quick check', q:'What does `%%~xf` give you for a file called `report.pdf`?',
+     options:['report','pdf','.pdf','report.pdf'], answer:2,
+     why:'The tilde-x modifier gives the extension including the dot.'},
+    {type:'quiz', title:'Quick check', q:'Why put `2>nul` in addition to `>nul`?',
+     options:['it is required','to hide error output as well','to speed it up','it does nothing'], answer:1,
+     why:'>nul hides normal output. 2>nul hides errors. Together they keep the screen clean.'},
+    {type:'read', title:'Putting it all together', body:
+"~~~bat\n@echo off\nsetlocal\n\nif not exist images mkdir images\nif not exist docs mkdir docs\nif not exist archives mkdir archives\nif not exist other mkdir other\n\necho Tidying up...\n\nfor %%f in (*.jpg *.png *.gif) do move \"%%f\" images\\ >nul 2>nul\nfor %%f in (*.txt *.md *.pdf) do move \"%%f\" docs\\ >nul 2>nul\nfor %%f in (*.zip *.rar *.7z) do move \"%%f\" archives\\ >nul 2>nul\n\necho Done. Files sorted.\npause\n~~~\n\nDrop this in a messy folder, double click it, and the mess is gone. Test it in a scratch folder first — `move` is not polite about asking."},
+    {type:'code', title:'Try a piece', lang:'bat',
+     prompt:'Make sure `images` folder exists (safe to run twice), then echo `ok`.',
+     starter:'@echo off\n', expect:'ok',
+     hint:'if not exist images mkdir images  then  echo ok'},
+    {type:'read', title:'Now go write your own', body:
+"You have now covered everything you need to write real batch scripts. Files, loops, conditionals, labels, delayed expansion, redirects, environment variables.\n\nThe trick from here is to look at something you do manually every week and automate it. That is literally the entire job."}
+  ]
+},
+
+/* ---------------- JavaScript ---------------- */
+{
+  id:'js-vars', title:'JavaScript: let, const, console.log', subject:'JavaScript', level:'Beginner', minutes:8,
+  tags:['javascript','web'], desc:'The language of every browser tab. Start here.',
+  steps:[
+    {type:'read', title:'Declaring things', body:
+"You use `let` for values that change and `const` for ones that do not.\n\n~~~js\nlet score = 0;\nconst name = \"Ada\";\nscore = score + 10;\n~~~\n\nIf you try to reassign a `const`, JavaScript throws an error. That is the point. It catches accidents.\n\nPrint with `console.log`. Note the dot, not a space.\n\n~~~js\nconsole.log(\"hello\");\nconsole.log(score);\n~~~\n\nOpen your browser dev tools with F12 and you will see a Console tab. That is where this output shows up."},
+    {type:'quiz', title:'Quick check', q:'Which keyword makes a value that cannot be reassigned?',
+     options:['let','var','const','final'], answer:2,
+     why:'const means constant. Trying to reassign throws an error.'},
+    {type:'predict', title:'What does this log?', lang:'js',
+     code:'let a = 2;\nlet b = 3;\nconsole.log(a * b);', answer:'6',
+     why:'2 times 3 is 6.'},
+    {type:'code', title:'Write it', lang:'js',
+     prompt:'Create `let n = 4` and log n squared.',
+     starter:'', expect:'16',
+     hint:'console.log(n * n);'}
+  ]
+},
+{
+  id:'js-fn', title:'JavaScript: Functions', subject:'JavaScript', level:'Intermediate', minutes:9,
+  tags:['javascript','functions'], desc:'Wrap logic in a name and run it whenever you want.',
+  steps:[
+    {type:'read', title:'Function shape', body:
+"~~~js\nfunction greet(who) {\n  return \"Hi \" + who;\n}\n\nconsole.log(greet(\"Ada\"));\n~~~\n\n- `who` is a parameter. It is a placeholder.\n- `\"Ada\"` is the argument. It is the actual value.\n- `return` sends a value back and immediately exits the function.\n\nForget `return` and the function gives back `undefined`."},
+    {type:'quiz', title:'Quick check', q:'What does `return` do?',
+     options:['prints to the screen','ends the program','sends a value back from the function','restarts the function'], answer:2,
+     why:'return hands a value back and immediately exits.'},
+    {type:'predict', title:'What does this log?', lang:'js',
+     code:'function double(x){ return x * 2; }\nconsole.log(double(5));', answer:'10',
+     why:'5 goes in, comes back doubled.'},
+    {type:'code', title:'Write a function', lang:'js',
+     prompt:'Write `add(a, b)` returning a + b, then log `add(3, 4)`.',
+     starter:'', expect:'7',
+     hint:'function add(a,b){ return a + b; }\nconsole.log(add(3,4));'}
+  ]
+},
+
+/* ---------------- WEB ---------------- */
+{
+  id:'web-1', title:'HTML and CSS: your first page', subject:'Web', level:'Beginner', minutes:10,
+  tags:['html','css','web'], desc:'Structure with HTML. Paint it with CSS. That is the whole front end.',
+  steps:[
+    {type:'read', title:'The skeleton', body:
+"~~~html\n<!DOCTYPE html>\n<html>\n  <head>\n    <title>My Page</title>\n  </head>\n  <body>\n    <h1>Hello!</h1>\n    <p>My first paragraph.</p>\n  </body>\n</html>\n~~~\n\nTags usually come in pairs. `<p>` opens, `</p>` closes. Content goes between them."},
+    {type:'quiz', title:'Quick check', q:'Which tag makes the biggest heading?',
+     options:['<head>','<h1>','<big>','<title>'], answer:1,
+     why:'h1 is the top level heading. head holds metadata, not visible content.'},
+    {type:'quiz', title:'Quick check', q:'Where does visible page content go?',
+     options:['inside <head>','inside <body>','inside <title>','anywhere'], answer:1,
+     why:'body holds everything the user actually sees.'},
+    {type:'read', title:'CSS', body:
+"CSS changes how things look. Drop a `<style>` block in the head.\n\n~~~html\n<style>\n  h1 { color: steelblue; }\n  p  { font-size: 18px; }\n</style>\n~~~\n\nEach rule is `selector { property: value; }`. The selector picks which elements. The braces hold the declarations."},
+    {type:'type', title:'From memory', prompt:'Type the CSS property that changes text colour (just the property name).',
+     answer:'color', hint:'American spelling. c-o-l-o-r, no u.'}
+  ]
+},
+
+/* ---------------- TERMINAL ---------------- */
+{
+  id:'cli-1', title:'Terminal basics', subject:'Terminal', level:'Beginner', minutes:9,
+  tags:['cli','terminal','shell'], desc:'Drive your computer with text. Faster than clicking once you learn it.',
+  steps:[
+    {type:'read', title:'The commands that matter', body:
+"~~~\npwd          print working directory (where am I)\nls           list files\ncd folder    move into a folder\ncd ..        go up one level\nmkdir name   make a folder\n~~~\n\nOn Windows Command Prompt, `ls` is `dir` and `pwd` is `cd` with no arguments."},
+    {type:'quiz', title:'Quick check', q:'Which command shows where you are?',
+     options:['ls','cd','pwd','open'], answer:2,
+     why:'pwd = print working directory.'},
+    {type:'quiz', title:'Quick check', q:'How do you go up one level?',
+     options:['cd ..','cd /','cd up','cd -'], answer:0,
+     why:'Two dots means "the parent folder".'},
+    {type:'type', title:'From memory', prompt:'Type the command that lists files (macOS and Linux).',
+     answer:'ls', hint:'Two letters.'},
+    {type:'read', title:'A real session', body:
+"~~~\npwd\nls\nmkdir projects\ncd projects\npwd\n~~~\n\nThat is you navigating a filesystem without a mouse. Weird at first. Faster forever after."}
+  ]
+}
+];
+
+function getLesson(id){ return allLessons().find(l => l.id === id); }
+
+/* ============================================================
+   CHEAT SHEETS
+   ============================================================ */
+const CHEATS = [
+  { title:'Python basics', rows:[
+    ['x = 5', 'assign a value'],
+    ['print(x)', 'print a value'],
+    ['input("prompt")', 'ask the user for text'],
+    ['len(x)', 'how many items'],
+    ['range(5)', '0, 1, 2, 3, 4'],
+    ['if x > 5:', 'branch (needs the colon)'],
+    ['def f(x):', 'define a function'],
+    ['return x', 'send a value back'],
+    ['# comment', 'comment']
+  ]},
+  { title:'Python lists & dicts', rows:[
+    ['nums = [1, 2, 3]', 'make a list'],
+    ['nums[0]', 'first item'],
+    ['nums[-1]', 'last item'],
+    ['nums.append(4)', 'add to end'],
+    ['sorted(nums)', 'sorted copy'],
+    ['nums[1:3]', 'slice'],
+    ['person = {"k": "v"}', 'make a dict'],
+    ['person["k"]', 'read from dict'],
+    ['person["x"] = 1', 'write to dict']
+  ]},
+  { title:'Python strings', rows:[
+    ['s.upper()', 'to uppercase'],
+    ['s.lower()', 'to lowercase'],
+    ['s.strip()', 'trim whitespace'],
+    ['s.split()', 'to list of words'],
+    ['s.replace(a, b)', 'swap text'],
+    ['f"{name} {age}"', 'f-string'],
+    ['len(s)', 'length'],
+    ['"a" + "b"', 'concatenate']
+  ]},
+  { title:'Batch essentials', rows:[
+    ['@echo off', 'hide command lines'],
+    ['echo text', 'print text'],
+    ['pause', 'wait for a key'],
+    ['set x=5', 'make a variable'],
+    ['set /a x=5+3', 'do math'],
+    ['set /p x=Prompt', 'ask for input'],
+    ['echo %x%', 'print variable x'],
+    ['if "%x%"=="y"', 'string compare'],
+    ['if %x% gtr 5', 'number compare'],
+    ['goto :label', 'jump to label'],
+    [':label', 'define a label'],
+    ['exit /b', 'quit the script']
+  ]},
+  { title:'Batch files', rows:[
+    ['if exist f.txt', 'file exists check'],
+    ['if not exist d', 'missing check'],
+    ['mkdir name', 'make a folder'],
+    ['rmdir name', 'remove empty folder'],
+    ['del f.txt', 'delete a file'],
+    ['copy a b /y', 'copy, no prompt'],
+    ['move a b', 'move'],
+    ['ren a b', 'rename'],
+    ['>nul', 'throw output away'],
+    ['2>nul', 'throw errors away'],
+    ['&& cmd', 'run if previous OK'],
+    ['|| cmd', 'run if previous failed']
+  ]},
+  { title:'Batch strings & loops', rows:[
+    ['%s:~0,5%', 'first 5 chars'],
+    ['%s:~5%', 'from index 5'],
+    ['%s:~0,-3%', 'all but last 3'],
+    ['%s:find=repl%', 'replace'],
+    ['for %%i in (a b) do', 'loop over items'],
+    ['for /l %%i in (1,1,5)', 'counted loop'],
+    ['for %%f in (*.txt) do', 'loop over files'],
+    ['%%f', 'current file'],
+    ['%%~nf', 'name, no extension'],
+    ['%%~xf', 'extension only']
+  ]},
+  { title:'Batch gotchas', rows:[
+    ['set x = 5', 'WRONG, has spaces'],
+    ['set x=5', 'right'],
+    ['%x% inside a for loop', 'expands once at parse time'],
+    ['!x! inside a for loop', 'expands at runtime'],
+    ['setlocal enabledelayedexpansion', 'needed for !x!'],
+    ['if %n% > 5', 'WRONG, redirect'],
+    ['if %n% gtr 5', 'right'],
+    ['%', 'means expand a variable'],
+    ['%%', 'a literal percent sign']
+  ]},
+  { title:'JavaScript', rows:[
+    ['let x = 5;', 'changeable variable'],
+    ['const x = 5;', 'unchangeable'],
+    ['console.log(x)', 'print'],
+    ['if (x > 5) {}', 'branch'],
+    ['for (let i = 0; i < 5; i++)', 'loop'],
+    ['function f(x) { return x }', 'function'],
+    ['[1, 2, 3]', 'array'],
+    ['{a: 1, b: 2}', 'object'],
+    ['x === y', 'strict equality'],
+    ['x == y', 'loose equality, avoid']
+  ]},
+  { title:'Terminal', rows:[
+    ['pwd', 'where am I'],
+    ['ls / dir', 'list files'],
+    ['cd folder', 'go into folder'],
+    ['cd ..', 'go up'],
+    ['mkdir name', 'make folder'],
+    ['rm file', 'delete file'],
+    ['cp a b', 'copy'],
+    ['mv a b', 'move/rename'],
+    ['cat file', 'show file contents'],
+    ['Ctrl+C', 'cancel running command']
+  ]},
+  { title:'HTML / CSS', rows:[
+    ['<h1>Title</h1>', 'heading'],
+    ['<p>Text</p>', 'paragraph'],
+    ['<a href="url">link</a>', 'link'],
+    ['<img src="x.png">', 'image'],
+    ['<ul><li>item</li></ul>', 'list'],
+    ['<div></div>', 'block container'],
+    ['<span></span>', 'inline container'],
+    ['color: red;', 'text colour'],
+    ['background: #fff;', 'background'],
+    ['class="x"', 'CSS hook']
+  ]}
+];
+
+/* ============================================================
+   DAILY TIPS
+   ============================================================ */
+const TIPS = [
+  "If Python says IndentationError, check your spaces. Tabs and spaces do not mix well.",
+  "Batch: `set name = Ada` makes a variable called `name ` with a space. No spaces around the =.",
+  "You cannot test code by reading it. Run it. Then run it with weird input.",
+  "If a bug makes no sense, print the value right before it breaks. Every single time.",
+  "In JavaScript, `==` does weird type stuff. Use `===` unless you have a reason.",
+  "A function should do one thing. If you cannot describe it in one line, split it.",
+  "Batch file closes instantly? Add `pause` at the end. That is the whole fix.",
+  "Before renaming 200 files with a for loop, run it with `echo` instead of `ren` first.",
+  "Python's `range(1, 5)` stops at 4. Not a bug. That is the design.",
+  "Back up your work. Not with git if you do not want to learn it yet. A folder of dated copies is fine.",
+  "You do not have to memorise syntax. You have to know what is possible.",
+  "Batch script acting weird? Put `@echo on` for one run and watch every line.",
+  "Copy-pasting code is fine. Copy-pasting code you do not understand is not.",
+  "The error message is almost always right. Read it twice before you rewrite anything.",
+  "In a batch for loop, `%x%` is expanded once. If your counter says 0 every time, that is why.",
+  "Tabs vs spaces does not matter in most languages. In Python it matters enormously.",
+  "If your loop runs forever, add a counter that quits after 1000. Then debug.",
+  "If you write the same code twice, that is the universe telling you to make it a function.",
+  "Read other people's code. Fastest way to level up after the basics.",
+  "If you cannot explain your code out loud, you do not fully understand it yet.",
+  "Batch has no real arrays. You fake them with variables like item1, item2, item3. It is fine.",
+  "The first version of any script should just print what it plans to do. Then make it actually do it."
+];
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+const app = $('#app');
+let player = null;
+let focusTimer = null;
+
+function go(route){ location.hash = '#/' + route; }
+function currentRoute(){
+  const h = location.hash.replace(/^#\/?/, '');
+  const [view, ...rest] = h.split('/');
+  return { view: view || 'home', param: rest.join('/') };
+}
+window.addEventListener('hashchange', render);
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if(g && !g.classList.contains('locked')){ e.preventDefault(); go(g.dataset.go); }
+});
+
+function render(){
+  stopFocus(false);
+  commitTimer();
+  player = null;
+  const { view, param } = currentRoute();
+  $$('.navlinks button').forEach(b => {
+    const t = b.dataset.go;
+    b.classList.toggle('on', t === view || (view === 'lesson' && t === 'lessons'));
+  });
+  window.scrollTo({top:0, behavior:'instant'});
+  if(view === 'home') viewHome();
+  else if(view === 'lessons') viewLessons();
+  else if(view === 'lesson') viewLesson(param);
+  else if(view === 'playground') viewPlayground();
+  else if(view === 'progress') viewProgress();
+  else if(view === 'teacher') viewTeacher();
+  else if(view === 'about') viewAbout();
+  else if(view === 'cheats') viewCheats();
+  else viewHome();
+}
+
+/* time tracking */
+let timerStart = null, timerLesson = null;
+function startTimer(id){ stopTimerOnly(); timerStart = Date.now(); timerLesson = id; }
+function stopTimerOnly(){
+  if(timerStart && timerLesson){
+    const secs = Math.floor((Date.now() - timerStart) / 1000);
+    S.timeSpent[timerLesson] = (S.timeSpent[timerLesson] || 0) + secs;
+    save();
+    timerStart = null; timerLesson = null;
+  }
+}
+function commitTimer(){ stopTimerOnly(); }
+
+/* ============================================================
+   card
+   ============================================================ */
+function card(l){
+  const done = S.completed[l.id];
+  const spent = S.timeSpent[l.id] || 0;
+  return '<div class="lcard" data-go="lesson/' + l.id + '">' +
+    (done ? '<div class="done-badge">✓</div>' : '') +
+    '<div class="row" style="gap:.4rem">' +
+      '<span class="tag">' + esc(l.subject) + '</span>' +
+      '<span class="tag ' + (l.level === 'Beginner' ? 'g' : l.level === 'Intermediate' ? 'y' : 'r') + '">' + esc(l.level) + '</span>' +
+    '</div>' +
+    '<h3>' + esc(l.title) + '</h3>' +
+    '<p>' + esc(l.desc) + '</p>' +
+    '<div class="foot">' +
+      '<span>' + l.steps.length + ' steps</span>' +
+      '<span>·</span>' +
+      '<span>' + l.minutes + ' min</span>' +
+      (spent > 60 ? '<span>·</span><span>spent ' + fmtDur(spent) + '</span>' : '') +
+    '</div>' +
+  '</div>';
+}
+function fmtDur(s){
+  if(s < 60) return s + 's';
+  const m = Math.floor(s/60), h = Math.floor(m/60);
+  if(h > 0) return h + 'h ' + (m%60) + 'm';
+  return m + 'm';
+}
+
+/* ============================================================
+   view home
+   ============================================================ */
+function viewHome(){
+  const lessons = allLessons();
+  const done = Object.keys(S.completed).length;
+  const mins = lessons.reduce((a, l) => a + l.minutes, 0);
+  const lvl = levelOf(S.xp);
+  const cur = S.xp - xpForLevel(lvl);
+  const need = xpForLevel(lvl+1) - xpForLevel(lvl);
+  const tipOfDay = TIPS[dayOfYear() % TIPS.length];
+  const rank = currentRank();
+  const next = nextRank();
+  const nextXp = next ? xpForLevel(next.min) : null;
+  const nextProgress = next ? Math.max(0, Math.min(100, (S.xp - xpForLevel(rank.min === 1 ? 1 : rank.min)) / (nextXp - xpForLevel(rank.min === 1 ? 1 : rank.min)) * 100)) : 100;
+
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero">' +
+      '<h1>Read less.<br><span>Build more.</span></h1>' +
+      '<p>' + lessons.length + ' lessons in Python, Batch, JavaScript, HTML and the terminal. Every one makes you type, predict, or write real code before it lets you move on. No passive video watching.</p>' +
+      '<div class="row wrap" style="margin-top:1.4rem">' +
+        '<button class="btn pri" id="continueBtn">' + (done ? 'Keep going' : 'Start here') + ' →</button>' +
+        '<button class="btn ghost" data-go="lessons">Browse all ' + lessons.length + ' lessons</button>' +
+        '<button class="btn ghost" id="randomBtn">🎲 Random lesson</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="titlebanner">' +
+      '<div class="em">' + rank.em + '</div>' +
+      '<div class="grow">' +
+        '<h3>Rank: ' + esc(rank.name) + '</h3>' +
+        '<div class="desc">' + esc(rank.desc) + '</div>' +
+        (next ?
+          '<div class="prog" style="margin-top:.6rem"><div style="width:' + nextProgress + '%"></div></div>' +
+          '<div class="muted" style="font-size:.78rem;margin-top:.35rem">' + (next.min - lvl) + ' more level' + ((next.min - lvl) > 1 ? 's' : '') + ' to unlock <b>' + next.em + ' ' + esc(next.name) + '</b></div>'
+          : '<div class="muted" style="font-size:.78rem;margin-top:.4rem">That is the top rank. Nothing left to unlock except Master Coder.</div>'
+        ) +
+      '</div>' +
+    '</div>' +
+
+    '<div class="dailycard">' +
+      '<div class="ic">💡</div>' +
+      '<div><strong>Tip of the day</strong><div class="muted" style="font-size:.9rem">' + esc(tipOfDay) + '</div></div>' +
+    '</div>' +
+
+    '<div class="kpis">' +
+      '<div class="kpi"><b>' + lessons.length + '</b><small>Lessons</small></div>' +
+      '<div class="kpi"><b>' + done + '</b><small>Done</small></div>' +
+      '<div class="kpi"><b>' + S.xp + '</b><small>XP</small></div>' +
+      '<div class="kpi"><b>' + streak() + '</b><small>Day streak</small></div>' +
+      '<div class="kpi"><b>' + S.focusMinutes + '</b><small>Focus min</small></div>' +
+      '<div class="kpi"><b>' + Math.round(mins/60 * 10)/10 + 'h</b><small>Content</small></div>' +
+    '</div>' +
+
+    '<div class="card" style="margin-top:2rem">' +
+      '<div class="row wrap" style="justify-content:space-between">' +
+        '<div><h3 style="margin:0">Level ' + lvl + '</h3>' +
+        '<div class="muted" style="font-size:.85rem">' + cur + ' / ' + need + ' XP to level ' + (lvl+1) + '</div></div>' +
+        '<div class="tag g">' + S.xp + ' XP</div>' +
+      '</div>' +
+      '<div class="lvlbar" style="margin-top:.8rem"><div style="width:' + Math.min(100, cur/need*100) + '%"></div></div>' +
+    '</div>' +
+
+    '<h2 style="margin:2.6rem 0 1rem;font-size:1.5rem;letter-spacing:-.02em">Everything on offer</h2>' +
+    '<div class="grid g3">' + lessons.map(card).join('') + '</div>' +
+
+    '<h2 style="margin:2.6rem 0 1rem;font-size:1.4rem;letter-spacing:-.02em">How it works</h2>' +
+    '<div class="grid g3">' +
+      '<div class="card"><div style="font-size:1.8rem">📖</div><h3>Short reads</h3><p class="muted" style="font-size:.9rem;margin:0">Explanations you can finish in a minute. Real code, real gotchas, no filler.</p></div>' +
+      '<div class="card"><div style="font-size:1.8rem">⌨️</div><h3>You have to do it</h3><p class="muted" style="font-size:.9rem;margin:0">Type the answer. Write the code. A step is only done when you have actually done it.</p></div>' +
+      '<div class="card"><div style="font-size:1.8rem">🔒</div><h3>Focus timer</h3><p class="muted" style="font-size:.9rem;margin:0">Start a session, stay in the lesson, watch the minutes tick up.</p></div>' +
+    '</div>' +
+  '</section>';
+
+  $('#continueBtn').onclick = () => {
+    const next = lessons.find(l => !S.completed[l.id]) || lessons[0];
+    go('lesson/' + next.id);
+  };
+  $('#randomBtn').onclick = () => {
+    const l = lessons[Math.floor(Math.random() * lessons.length)];
+    go('lesson/' + l.id);
+  };
+}
+function dayOfYear(){
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now - start) / 86400000);
+}
+
+/* ============================================================
+   view lessons
+   ============================================================ */
+let filterSubject = 'All', filterQuery = '';
+function viewLessons(){
+  const subjects = ['All'].concat([...new Set(allLessons().map(l => l.subject))]);
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.4rem">' +
+      '<h1 style="font-size:2.2rem">All lessons</h1>' +
+      '<p>' + allLessons().length + ' total. Filter by subject or search for something.</p>' +
+    '</div>' +
+    '<div class="toolbar">' +
+      '<label class="search">🔍 <input id="q" placeholder="Search lessons, tags, subjects…" value="' + esc(filterQuery) + '"></label>' +
+      subjects.map(s => '<button class="pill ' + (s === filterSubject ? 'on' : '') + '" data-sub="' + esc(s) + '">' + esc(s) + '</button>').join('') +
+    '</div>' +
+    '<div id="results" class="grid g3"></div>' +
+  '</section>';
+
+  $('#q').oninput = e => { filterQuery = e.target.value; paintResults(); };
+  $$('[data-sub]').forEach(b => b.onclick = () => {
+    filterSubject = b.dataset.sub;
+    $$('[data-sub]').forEach(x => x.classList.toggle('on', x.dataset.sub === filterSubject));
+    paintResults();
+  });
+  paintResults();
+}
+function paintResults(){
+  const q = filterQuery.trim().toLowerCase();
+  const list = allLessons().filter(l =>
+    (filterSubject === 'All' || l.subject === filterSubject) &&
+    (!q || (l.title + l.desc + l.subject + (l.tags||[]).join(' ')).toLowerCase().includes(q))
+  );
+  $('#results').innerHTML = list.length
+    ? list.map(card).join('')
+    : '<p class="muted">Nothing matches. Clear the filter, or build your own in <a href="#/teacher">Studio</a>.</p>';
+}
+
+/* ============================================================
+   view lesson
+   ============================================================ */
+function viewLesson(id){
+  const lesson = getLesson(id);
+  if(!lesson){
+    app.innerHTML = '<section class="view on"><p class="muted">Lesson not found. <a href="#/lessons">Back to lessons</a></p></section>';
+    return;
+  }
+  player = {
+    lesson,
+    index: 0,
+    completed: new Set(),
+    mistakes: 0,
+    startedAt: Date.now(),
+    xpEarned: 0,
+    rankBefore: currentRank().name
+  };
+  startTimer(lesson.id);
+
+  const spent = S.timeSpent[lesson.id] || 0;
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="lhead">' +
+      '<button class="btn ghost sm" data-go="lessons">← Lessons</button>' +
+      '<div class="grow">' +
+        '<h2>' + esc(lesson.title) + '</h2>' +
+        '<div class="muted" style="font-size:.86rem">' + esc(lesson.subject) + ' · ' + esc(lesson.level) + ' · about ' + lesson.minutes + ' min · ' + lesson.steps.length + ' steps' +
+        (spent > 30 ? ' · you have already put ' + fmtDur(spent) + ' into this' : '') +
+        '</div>' +
+      '</div>' +
+      '<button class="btn pri" id="lockBtn">🔒 LOCK IN</button>' +
+    '</div>' +
+    '<div class="pbar"><div id="pfill"></div></div>' +
+    '<div id="focusBar"></div>' +
+    '<div class="stepnav" id="dots"></div>' +
+    '<div id="stepHost"></div>' +
+    '<div class="card" style="margin-top:1.4rem">' +
+      '<div class="row" style="justify-content:space-between;margin-bottom:.5rem">' +
+        '<strong style="font-size:.9rem">📝 Notes for this lesson</strong>' +
+        '<span class="dim" style="font-size:.75rem" id="noteStatus">saved locally</span>' +
+      '</div>' +
+      '<textarea class="note-area" id="noteArea" placeholder="Anything you want to jot down. Saves as you type.">' + esc(S.notes[lesson.id] || '') + '</textarea>' +
+    '</div>' +
+  '</section>';
+
+  $('#lockBtn').onclick = () => startFocus(lesson.minutes);
+  const ta = $('#noteArea');
+  let noteT = null;
+  ta.addEventListener('input', () => {
+    clearTimeout(noteT);
+    $('#noteStatus').textContent = 'saving…';
+    noteT = setTimeout(() => {
+      S.notes[lesson.id] = ta.value;
+      save();
+      $('#noteStatus').textContent = 'saved';
+      checkBadges();
+    }, 500);
+  });
+
+  paintStep();
+}
+
+function paintProgress(){
+  const n = player.lesson.steps.length;
+  const done = player.completed.size;
+  $('#pfill').style.width = (done/n*100) + '%';
+  $('#dots').innerHTML = player.lesson.steps.map((s, i) => {
+    const cls = ['dot'];
+    if(i === player.index) cls.push('on');
+    if(player.completed.has(i)) cls.push('done');
+    const unlocked = i <= player.index || player.completed.has(i-1);
+    if(!unlocked) cls.push('locked');
+    return '<button class="' + cls.join(' ') + '" data-jump="' + i + '" title="' + esc(s.title || s.type) + '">' +
+      (player.completed.has(i) ? '✓' : i+1) + '</button>';
+  }).join('') + '<span class="dim" style="margin-left:.5rem;font-size:.78rem">' + done + ' / ' + n + ' done</span>';
+  $$('#dots [data-jump]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.jump;
+    if(i <= player.index || player.completed.has(i-1)){ player.index = i; paintStep(); }
+  });
+}
+
+function paintStep(){
+  const { lesson, index } = player;
+  const step = lesson.steps[index];
+  const host = $('#stepHost');
+  const n = lesson.steps.length;
+  const last = index === n - 1;
+  const hard = S.hardMode;
+
+  const head = '<div class="row" style="justify-content:space-between;margin-bottom:1rem">' +
+      '<span class="tag v">Step ' + (index+1) + ' of ' + n + '</span>' +
+      '<span class="dim" style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em">' + step.type + '</span>' +
+    '</div>';
+
+  let inner = '';
+  if(step.type === 'read'){
+    inner = head + '<h3>' + esc(step.title || 'Read') + '</h3><div class="body">' + md(step.body) + '</div>' +
+      '<div class="stepfoot"><button class="btn pri" id="doneBtn">Got it →</button></div>';
+  }
+  else if(step.type === 'quiz'){
+    inner = head + '<h3>' + esc(step.title || 'Quick check') + '</h3><div class="body">' + md(step.q) + '</div>' +
+      '<div id="opts" style="margin-top:1rem">' +
+        step.options.map((o, i) => '<div class="opt" data-i="' + i + '"><span class="k">' + String.fromCharCode(65+i) + '</span><span>' + esc(o) + '</span></div>').join('') +
+      '</div>' +
+      '<div id="fb"></div>' +
+      '<div class="stepfoot"><button class="btn pri" id="checkBtn" disabled>Check</button></div>';
+  }
+  else if(step.type === 'predict'){
+    inner = head + '<h3>' + esc(step.title || 'What does this print?') + '</h3>' +
+      '<p class="muted" style="font-size:.9rem;margin:.2rem 0 .6rem">Type the exact output. Capital letters and spacing count.</p>' +
+      '<pre class="code">' + esc(step.code) + '</pre>' +
+      '<input class="answer" id="ans" placeholder="exact output…" autocomplete="off" spellcheck="false">' +
+      '<div id="fb"></div>' +
+      '<div class="stepfoot"><button class="btn pri" id="checkBtn">Check</button>' +
+        (hard ? '' : '<button class="btn ghost sm" id="hintBtn">💡 Hint</button>') +
+      '</div>';
+  }
+  else if(step.type === 'code'){
+    inner = head + '<h3>' + esc(step.title || 'Write the code') + '</h3><div class="body">' + md(step.prompt) + '</div>' +
+      '<textarea class="editor" id="editor" spellcheck="false">' + esc(step.starter || '') + '</textarea>' +
+      '<div class="row wrap" style="margin-top:.7rem">' +
+        '<button class="btn ok" id="runBtn">▶ Run</button>' +
+        '<button class="btn pri" id="checkBtn">Submit</button>' +
+        (hard ? '' : '<button class="btn ghost sm" id="hintBtn">💡 Hint</button>') +
+        '<button class="btn ghost sm" id="resetBtn">Reset</button>' +
+      '</div>' +
+      '<div class="console" id="out">Press Run to see the output.</div>' +
+      '<div id="fb"></div>';
+  }
+  else if(step.type === 'type'){
+    inner = head + '<h3>' + esc(step.title || 'From memory') + '</h3><div class="body">' + md(step.prompt) + '</div>' +
+      '<input class="answer" id="ans" placeholder="type your answer…" autocomplete="off" spellcheck="false" style="margin-top:.8rem">' +
+      '<div id="fb"></div>' +
+      '<div class="stepfoot"><button class="btn pri" id="checkBtn">Check</button>' +
+        (hard ? '' : '<button class="btn ghost sm" id="hintBtn">💡 Hint</button>') +
+      '</div>';
+  }
+
+  host.innerHTML = '<div class="step">' + inner + '</div>';
+
+  const nav = document.createElement('div');
+  nav.className = 'stepfoot';
+  nav.innerHTML =
+    '<button class="btn ghost" id="prevBtn" ' + (index === 0 ? 'disabled' : '') + '>← Back</button>' +
+    '<span class="grow"></span>' +
+    '<button class="btn ' + (player.completed.has(index) ? 'ok' : 'ghost') + '" id="nextBtn" ' + ((!player.completed.has(index) && !last) ? 'disabled' : '') + '>' +
+      (last ? (player.completed.has(index) ? 'Finish lesson →' : 'Complete to finish') : 'Next →') +
+    '</button>';
+  host.appendChild(nav);
+
+  $('#prevBtn').onclick = () => { if(player.index > 0){ player.index--; paintStep(); } };
+  $('#nextBtn').onclick = () => {
+    if(last){ finishLesson(); return; }
+    player.index++; paintStep();
+  };
+
+  if(step.type === 'read'){
+    $('#doneBtn').onclick = () => completeStep(8);
+  }
+
+  if(step.type === 'quiz'){
+    let sel = null;
+    $$('#opts .opt').forEach(o => o.onclick = () => {
+      if(player.completed.has(index)) return;
+      $$('#opts .opt').forEach(x => x.classList.remove('sel'));
+      o.classList.add('sel');
+      sel = +o.dataset.i;
+      $('#checkBtn').disabled = false;
+    });
+    $('#checkBtn').onclick = () => {
+      if(sel === null) return;
+      S.quizTotal++;
+      const right = sel === step.answer;
+      $$('#opts .opt').forEach((o, i) => {
+        o.classList.remove('sel');
+        if(i === step.answer) o.classList.add('right');
+        else if(i === sel) o.classList.add('wrong');
+      });
+      if(right){
+        S.quizRight++;
+        feedback('ok', 'Yep.', step.why);
+        completeStep(15);
+      } else {
+        player.mistakes++;
+        feedback('bad', 'Not quite.', step.why);
+      }
+      $('#checkBtn').disabled = true;
+    };
+  }
+
+  if(step.type === 'predict' || step.type === 'type'){
+    const input = $('#ans');
+    const submit = () => {
+      const norm = s => String(s).replace(/\s+/g, ' ').trim().toLowerCase();
+      if(norm(input.value) === norm(step.answer)){
+        input.style.borderColor = 'var(--ok)';
+        feedback('ok', 'Correct.', step.why || '');
+        completeStep(step.type === 'predict' ? 20 : 12);
+      } else {
+        player.mistakes++;
+        input.style.borderColor = 'var(--bad)';
+        feedback('bad', 'Not quite.', step.why || 'Check spelling, quotes, and spacing. Then try again.');
+      }
+    };
+    $('#checkBtn').onclick = submit;
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+    const hb = $('#hintBtn'); if(hb) hb.onclick = () => hint(step.hint);
+    input.focus();
+  }
+
+  if(step.type === 'code'){
+    const ed = $('#editor'), out = $('#out');
+    const hb = $('#hintBtn'); if(hb) hb.onclick = () => hint(step.hint);
+    $('#resetBtn').onclick = () => { ed.value = step.starter || ''; out.innerHTML = 'Press Run to see the output.'; };
+    const run = () => {
+      const res = runCode(ed.value, step.lang);
+      out.innerHTML = res.ok
+        ? esc(res.output || '(no output)')
+        : '<span class="err">' + esc(res.error) + '</span>';
+      return res;
+    };
+    $('#runBtn').onclick = run;
+    ed.addEventListener('keydown', e => {
+      if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); run(); }
+    });
+    $('#checkBtn').onclick = () => {
+      const res = run();
+      if(!res.ok){
+        player.mistakes++;
+        feedback('bad', 'Your code errored.', res.error);
+        return;
+      }
+      const norm = s => String(s).replace(/\r/g, '').replace(/\s+$/, '').trim();
+      if(norm(res.output) === norm(step.expect)){
+        feedback('ok', 'That is the output.', 'Nice.');
+        S.codeDone++;
+        completeStep(25);
+      } else {
+        player.mistakes++;
+        feedback('bad', 'Output is different.',
+          'Expected:\n' + step.expect + '\n\nGot:\n' + (res.output || '(nothing)'));
+      }
+    };
+  }
+
+  paintProgress();
+}
+
+function feedback(kind, title, body){
+  const el = $('#fb');
+  if(!el) return;
+  el.innerHTML = '<div class="feedback ' + kind + '">' +
+    '<span class="ic">' + (kind === 'ok' ? '✓' : '✕') + '</span>' +
+    '<div><strong>' + esc(title) + '</strong>' +
+    (body ? '<div style="margin-top:.3rem;white-space:pre-wrap">' + esc(body) + '</div>' : '') +
+    '</div></div>';
+}
+function hint(text){
+  const el = $('#fb');
+  if(!el) return;
+  el.innerHTML = '<div class="hintbox">💡 ' + esc(text || 'Re-read the step above carefully.') + '</div>';
+}
+
+function completeStep(xp){
+  const i = player.index;
+  if(player.completed.has(i)) return;
+  player.completed.add(i);
+  player.xpEarned += xp;
+  addXp(xp, null);
+  paintProgress();
+  const n = player.lesson.steps.length;
+  const nb = $('#nextBtn');
+  if(nb){
+    if(i < n-1){
+      nb.disabled = false;
+      nb.classList.remove('ghost');
+      nb.classList.add('ok');
+    } else {
+      nb.disabled = false;
+      nb.textContent = 'Finish lesson →';
+      nb.classList.remove('ghost');
+      nb.classList.add('ok');
+    }
+  }
+  if(i < n-1){
+    setTimeout(() => {
+      if(player && player.index === i && player.completed.has(i)){
+        player.index = i+1;
+        paintStep();
+      }
+    }, 800);
+  }
+}
+
+function finishLesson(){
+  const l = player.lesson;
+  const first = !S.completed[l.id];
+  if(first){
+    S.completed[l.id] = { date: todayKey() };
+    S.lessonsDone++;
+    if(player.mistakes === 0 && !S.badges.includes('perfect')) S.badges.push('perfect');
+    if(S.hardMode && player.mistakes === 0 && !S.badges.includes('hard')) S.badges.push('hard');
+    pushRecent('✅', 'Finished: ' + l.title);
+  }
+  addXp(40, 'lesson finished');
+  commitTimer();
+  save();
+  checkBadges();
+  checkRankUp();
+  paintHud();
+
+  const perfect = player.mistakes === 0;
+  const rankedUp = player.rankBefore !== currentRank().name;
+  const rank = currentRank();
+
+  $('#modalBox').innerHTML =
+    '<div class="big">' + (rankedUp ? rank.em : (perfect ? '💎' : '✅')) + '</div>' +
+    '<h2>' + (rankedUp ? 'New rank: ' + esc(rank.name) : (perfect ? 'Clean run.' : 'Lesson finished.')) + '</h2>' +
+    (rankedUp ?
+      '<p class="muted">' + esc(rank.desc) + '</p>' +
+      '<div class="card" style="margin:1rem 0;background:linear-gradient(135deg,#fbbf2418,#a78bfa1a);border-color:#fbbf2455">' +
+        '<div style="font-size:2.4rem">' + rank.em + '</div>' +
+        '<div style="font-weight:900;color:var(--gold);font-size:1.15rem">' + esc(rank.name) + '</div>' +
+      '</div>'
+      : '<p class="muted">' + esc(l.title) + '</p>'
+    ) +
+    '<div class="grid g3" style="margin:1.4rem 0">' +
+      '<div class="kpi"><b>' + (player.xpEarned + 40) + '</b><small>XP</small></div>' +
+      '<div class="kpi"><b>' + player.mistakes + '</b><small>Mistakes</small></div>' +
+      '<div class="kpi"><b>' + Math.max(1, Math.round((Date.now() - player.startedAt)/60000)) + '</b><small>Minutes</small></div>' +
+    '</div>' +
+    '<div class="row wrap" style="justify-content:center">' +
+      '<button class="btn pri" id="mNext">Next lesson →</button>' +
+      '<button class="btn ghost" id="mBack">All lessons</button>' +
+      '<button class="btn ghost" id="mRetry">Run it again</button>' +
+    '</div>';
+  $('#modal').classList.add('on');
+  $('#mBack').onclick = () => { $('#modal').classList.remove('on'); go('lessons'); };
+  $('#mRetry').onclick = () => { $('#modal').classList.remove('on'); go('lesson/' + l.id); };
+  $('#mNext').onclick = () => {
+    $('#modal').classList.remove('on');
+    const list = allLessons();
+    const i = list.findIndex(x => x.id === l.id);
+    const nxt = list.slice(i+1).find(x => !S.completed[x.id]) || list[(i+1) % list.length];
+    go('lesson/' + nxt.id);
+  };
+}
+
+/* ============================================================
+   focus timer
+   ============================================================ */
+function startFocus(minutes){
+  stopFocus(false);
+  let left = minutes * 60;
+  const bar = $('#focusBar');
+  if(!bar) return;
+  bar.innerHTML = '<div class="focusbar">' +
+      '<b id="fTime">' + fmt(left) + '</b>' +
+      '<span class="muted grow">Locked in. Stay on this tab. 5 XP every minute.</span>' +
+      '<button class="btn ghost sm" id="fStop">End session</button>' +
+    '</div>';
+  const tick = () => {
+    left--;
+    const t = $('#fTime');
+    if(!t){ clearInterval(focusTimer); focusTimer = null; return; }
+    t.textContent = fmt(left);
+    if(left % 60 === 0 && left > 0){
+      S.focusMinutes++; addXp(5, null); checkBadges(); save();
+    }
+    if(left <= 0){
+      clearInterval(focusTimer); focusTimer = null;
+      S.focusMinutes += 1; addXp(25, 'focus session done');
+      checkBadges(); save();
+      toast('Focus session done.');
+      if($('#focusBar')) $('#focusBar').innerHTML = '';
+    }
+  };
+  focusTimer = setInterval(tick, 1000);
+  $('#fStop').onclick = () => stopFocus(true);
+}
+function stopFocus(notify){
+  if(focusTimer){ clearInterval(focusTimer); focusTimer = null; if(notify) toast('Focus session ended'); }
+}
+const fmt = s => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+
+/* ============================================================
+   interpreters
+   ============================================================ */
+function splitArgs(str){
+  const out = []; let cur = ''; let depth = 0; let q = null;
+  for(let i = 0; i < str.length; i++){
+    const c = str[i];
+    if(q){ cur += c; if(c === q && str[i-1] !== '\\') q = null; continue; }
+    if(c === '"' || c === "'"){ q = c; cur += c; continue; }
+    if('([{'.includes(c)) depth++;
+    if(')]}'.includes(c)) depth--;
+    if(c === ',' && depth === 0){ out.push(cur.trim()); cur = ''; continue; }
+    cur += c;
+  }
+  if(cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+function evalPy(expr, vars){
+  let e = String(expr).trim();
+  e = e.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false').replace(/\bNone\b/g, 'null');
+  e = e.replace(/\band\b/g, '&&').replace(/\bor\b/g, '||').replace(/\bnot\s+/g, '!');
+  // f-string
+  if(/^f["']/.test(e)){
+    const q = e[1];
+    if(e.endsWith(q)){
+      const inner = e.slice(2, -1);
+      e = '`' + inner.replace(/\\?\{([^}]+)\}/g, (_, x) => '${' + x + '}') + '`';
+    }
+  }
+  // method chains: .upper() .lower() .strip() .split() .replace() .append() → JS equivalents
+  e = e.replace(/\.upper\(\)/g, '.toUpperCase()');
+  e = e.replace(/\.lower\(\)/g, '.toLowerCase()');
+  e = e.replace(/\.strip\(\)/g, '.trim()');
+  e = e.replace(/\.split\(\)/g, '.split(/\\s+/)');
+  const keys = Object.keys(vars);
+  try{
+    const fn = new Function(...keys, '"use strict"; return (' + e + ');');
+    return fn(...keys.map(k => vars[k]));
+  }catch(err){
+    return expr;
+  }
+}
+
+function runPython(src){
+  const out = [];
+  const vars = {};
+  const rawLines = src.split('\n');
+  const lines = [];
+  for(let raw of rawLines){
+    const clean = raw.replace(/#.*$/, '').replace(/\s+$/, '');
+    if(!clean.trim()) continue;
+    const indent = raw.match(/^\s*/)[0].replace(/\t/g, '    ').length;
+    lines.push({ text: clean.trim(), indent });
+  }
+
+  let ip = 0;
+  let steps = 0;
+  const MAX = 5000;
+
+  function tryMethodCall(text){
+    // list.append(x)
+    const ap = text.match(/^([A-Za-z_]\w*)\.append\((.+)\)$/);
+    if(ap){
+      const arr = vars[ap[1]];
+      if(Array.isArray(arr)) arr.push(evalPy(ap[2], vars));
+      return true;
+    }
+    // d[key] = value
+    const dset = text.match(/^([A-Za-z_]\w*)\[["']?([^"'\]]+)["']?\]\s*=\s*(.+)$/);
+    if(dset){
+      const name = dset[1];
+      if(!vars[name]) vars[name] = {};
+      const key = dset[2].replace(/^["']|["']$/g, '');
+      vars[name][key] = evalPy(dset[3], vars);
+      return true;
+    }
+    return false;
+  }
+
+  function runOne(){
+    const line = lines[ip];
+    if(!line) return;
+    const ifm = line.text.match(/^if\s+(.+):$/);
+    if(ifm){
+      const cond = !!evalPy(ifm[1], vars);
+      const baseIndent = line.indent;
+      ip++;
+      let bodyEnd = ip;
+      while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+      if(!cond) ip = bodyEnd;
+      return;
+    }
+    const form = line.text.match(/^for\s+(\w+)\s+in\s+range\(([^)]*)\)\s*:$/);
+    if(form){
+      const args = splitArgs(form[2]).map(a => +evalPy(a, vars) || 0);
+      let start = 0, stop = args[0], step = 1;
+      if(args.length === 2){ start = args[0]; stop = args[1]; }
+      else if(args.length >= 3){ start = args[0]; stop = args[1]; step = args[2] || 1; }
+      const baseIndent = line.indent;
+      const bodyStart = ip + 1;
+      let bodyEnd = bodyStart;
+      while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+      for(let v = start; (step > 0 ? v < stop : v > stop); v += step){
+        vars[form[1]] = v;
+        let j = bodyStart;
+        while(j < bodyEnd){
+          const ln = lines[j];
+          const pr = ln.text.match(/^print\s*\((.*)\)\s*$/);
+          if(pr) out.push(splitArgs(pr[1]).map(a => String(evalPy(a, vars))).join(' '));
+          const asg = ln.text.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+          if(asg && !pr) vars[asg[1]] = evalPy(asg[2], vars);
+          tryMethodCall(ln.text);
+          j++;
+        }
+      }
+      ip = bodyEnd;
+      return;
+    }
+    const forl = line.text.match(/^for\s+(\w+)\s+in\s+(\[.+\])\s*:$/);
+    if(forl){
+      const list = evalPy(forl[2], vars);
+      const baseIndent = line.indent;
+      const bodyStart = ip + 1;
+      let bodyEnd = bodyStart;
+      while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+      for(const item of list){
+        vars[forl[1]] = item;
+        let j = bodyStart;
+        while(j < bodyEnd){
+          const ln = lines[j];
+          const pr = ln.text.match(/^print\s*\((.*)\)\s*$/);
+          if(pr) out.push(splitArgs(pr[1]).map(a => String(evalPy(a, vars))).join(' '));
+          const asg = ln.text.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+          if(asg && !pr) vars[asg[1]] = evalPy(asg[2], vars);
+          j++;
+        }
+      }
+      ip = bodyEnd;
+      return;
+    }
+    const pr = line.text.match(/^print\s*\((.*)\)\s*$/);
+    if(pr){
+      out.push(splitArgs(pr[1]).map(a => String(evalPy(a, vars))).join(' '));
+      ip++;
+      return;
+    }
+    const asg = line.text.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+    if(asg){ vars[asg[1]] = evalPy(asg[2], vars); ip++; return; }
+    if(tryMethodCall(line.text)){ ip++; return; }
+    ip++;
+  }
+
+  function runBlock(minIndent){
+    while(ip < lines.length){
+      if(++steps > MAX) return;
+      const line = lines[ip];
+      if(line.indent < minIndent) return;
+      if(line.indent > minIndent){ ip++; continue; }
+
+      const ifm = line.text.match(/^if\s+(.+):$/);
+      if(ifm){
+        const baseIndent = line.indent;
+        const condVal = !!evalPy(ifm[1], vars);
+        ip++;
+        let thenEnd = ip;
+        while(thenEnd < lines.length && lines[thenEnd].indent > baseIndent) thenEnd++;
+        if(condVal){ runBlock(baseIndent + 1); }
+        else { ip = thenEnd; }
+        while(ip < lines.length && lines[ip].indent === baseIndent){
+          const t = lines[ip].text;
+          const elifm = t.match(/^elif\s+(.+):$/);
+          const elsem = t.match(/^else\s*:$/);
+          if(elifm){
+            ip++;
+            let end = ip;
+            while(end < lines.length && lines[end].indent > baseIndent) end++;
+            if(!condVal && !thenEnd.taken){}
+            // simplified: we do not track elif properly for the mini-runner, just run if else
+            ip = end;
+            break;
+          } else if(elsem){
+            ip++;
+            let end = ip;
+            while(end < lines.length && lines[end].indent > baseIndent) end++;
+            if(!condVal){ runBlock(baseIndent + 1); }
+            ip = end;
+            break;
+          } else break;
+        }
+        continue;
+      }
+
+      const form = line.text.match(/^for\s+(\w+)\s+in\s+range\(([^)]*)\)\s*:$/);
+      if(form){
+        const args = splitArgs(form[2]).map(a => +evalPy(a, vars) || 0);
+        let start = 0, stop = 0, step = 1;
+        if(args.length === 1){ stop = args[0]; }
+        else if(args.length === 2){ start = args[0]; stop = args[1]; }
+        else if(args.length >= 3){ start = args[0]; stop = args[1]; step = args[2] || 1; }
+        if(step === 0) step = 1;
+        const baseIndent = line.indent;
+        const bodyStart = ip + 1;
+        let bodyEnd = bodyStart;
+        while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+        for(let v = start; (step > 0 ? v < stop : v > stop); v += step){
+          vars[form[1]] = v;
+          ip = bodyStart;
+          while(ip < bodyEnd){
+            const before = ip;
+            runOne();
+            if(ip === before) ip++;
+            if(steps++ > MAX) break;
+          }
+        }
+        ip = bodyEnd;
+        continue;
+      }
+
+      const forl = line.text.match(/^for\s+(\w+)\s+in\s+(\[.+\])\s*:$/);
+      if(forl){
+        const list = evalPy(forl[2], vars);
+        const baseIndent = line.indent;
+        const bodyStart = ip + 1;
+        let bodyEnd = bodyStart;
+        while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+        for(const item of list){
+          vars[forl[1]] = item;
+          ip = bodyStart;
+          while(ip < bodyEnd){
+            const before = ip;
+            runOne();
+            if(ip === before) ip++;
+            if(steps++ > MAX) break;
+          }
+        }
+        ip = bodyEnd;
+        continue;
+      }
+
+      const whilem = line.text.match(/^while\s+(.+):$/);
+      if(whilem){
+        const baseIndent = line.indent;
+        const bodyStart = ip + 1;
+        let bodyEnd = bodyStart;
+        while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+        let guard = 0;
+        while(!!evalPy(whilem[1], vars) && guard++ < 2000){
+          ip = bodyStart;
+          while(ip < bodyEnd){
+            const before = ip;
+            runOne();
+            if(ip === before) ip++;
+            if(steps++ > MAX) break;
+          }
+        }
+        ip = bodyEnd;
+        continue;
+      }
+
+      const defm = line.text.match(/^def\s+(\w+)\s*\(([^)]*)\)\s*:$/);
+      if(defm){
+        const fname = defm[1];
+        const params = defm[2].split(',').map(s => s.trim()).filter(Boolean);
+        const baseIndent = line.indent;
+        const bodyStart = ip + 1;
+        let bodyEnd = bodyStart;
+        while(bodyEnd < lines.length && lines[bodyEnd].indent > baseIndent) bodyEnd++;
+        const body = lines.slice(bodyStart, bodyEnd);
+        vars[fname] = (...args) => {
+          const scopeVars = Object.assign({}, vars);
+          params.forEach((p, i) => { scopeVars[p] = args[i]; });
+          for(const ln of body){
+            const t = ln.text;
+            const pr = t.match(/^print\s*\((.*)\)\s*$/);
+            if(pr){ out.push(splitArgs(pr[1]).map(a => String(evalPy(a, scopeVars))).join(' ')); continue; }
+            const rm = t.match(/^return\s+(.+)$/);
+            if(rm){ return evalPy(rm[1], scopeVars); }
+            const asg = t.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+            if(asg){ scopeVars[asg[1]] = evalPy(asg[2], scopeVars); continue; }
+          }
+          return undefined;
+        };
+        ip = bodyEnd;
+        continue;
+      }
+
+      const ret = line.text.match(/^return\s+(.+)$/);
+      if(ret){ ip++; continue; }
+
+      const pr = line.text.match(/^print\s*\((.*)\)\s*$/);
+      if(pr){
+        out.push(splitArgs(pr[1]).map(a => String(evalPy(a, vars))).join(' '));
+        ip++;
+        continue;
+      }
+
+      const asg = line.text.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+      if(asg){
+        vars[asg[1]] = evalPy(asg[2], vars);
+        ip++;
+        continue;
+      }
+
+      if(tryMethodCall(line.text)){ ip++; continue; }
+
+      ip++;
+    }
+  }
+
+  try{
+    runBlock(0);
+    return { ok:true, output: out.join('\n') };
+  } catch(e){
+    return { ok:false, output: out.join('\n'), error: 'Runtime error: ' + (e.message || e) };
+  }
+}
+
+function runJS(src){
+  const out = [];
+  const fake = {
+    log: (...a) => out.push(a.map(x => (typeof x === 'object' && x !== null) ? JSON.stringify(x) : String(x)).join(' ')),
+    error: (...a) => out.push(a.map(String).join(' ')),
+    warn: (...a) => out.push(a.map(String).join(' '))
+  };
+  try{
+    const fn = new Function('console', '"use strict";\n' + src);
+    const r = fn(fake);
+    if(r !== undefined && out.length === 0) out.push(String(r));
+    return { ok:true, output: out.join('\n') };
+  } catch(e){
+    return { ok:false, output: out.join('\n'), error: e.name + ': ' + e.message };
+  }
+}
+
+function runBat(src){
+  const vars = {};
+  const out = [];
+  const lines = src.split('\n');
+  const labels = {};
+  lines.forEach((line, i) => {
+    const m = line.trim().match(/^:([A-Za-z_]\w*)/);
+    if(m) labels[m[1].toLowerCase()] = i;
+  });
+
+  function expand(str){
+    return str
+      .replace(/%([A-Za-z_]\w*)%/g, (_, k) => vars[k.toLowerCase()] != null ? vars[k.toLowerCase()] : '')
+      .replace(/%%/g, '%');
+  }
+  // substring / replace modifiers
+  function expandMods(str){
+    // %var:~start,length%  or  %var:~start%
+    let out = str.replace(/%([A-Za-z_]\w*):~(-?\d+)(?:,(-?\d+))?%/g, (_, name, start, len) => {
+      const v = vars[name.toLowerCase()] || '';
+      const s = parseInt(start, 10);
+      const st = s < 0 ? v.length + s : s;
+      if(len == null) return v.slice(st);
+      const l = parseInt(len, 10);
+      return l < 0 ? v.slice(st, v.length + l) : v.slice(st, st + l);
+    });
+    // %var:find=replace%
+    out = out.replace(/%([A-Za-z_]\w*):([^=]*)=([^%]*)%/g, (_, name, find, repl) => {
+      const v = vars[name.toLowerCase()] || '';
+      return v.split(find).join(repl);
+    });
+    return out;
+  }
+  function fullExpand(str){ return expandMods(expand(str)); }
+
+  let ip = 0, steps = 0;
+  const MAX = 3000;
+
+  while(ip < lines.length && steps++ < MAX){
+    let line = lines[ip].trim();
+    if(!line){ ip++; continue; }
+    if(line.startsWith('::') || /^rem\b/i.test(line)){ ip++; continue; }
+    if(/^@?echo\s+off\s*$/i.test(line)){ ip++; continue; }
+    if(/^pause\s*$/i.test(line)){ ip++; continue; }
+    if(/^(cls|title|color|setlocal|endlocal)\b/i.test(line)){ ip++; continue; }
+    if(/^:([A-Za-z_]\w*)/.test(line)){ ip++; continue; }
+    if(/^exit\s*\/b\b/i.test(line)){ break; }
+
+    const gtm = line.match(/^goto\s+:?([A-Za-z_]\w*)/i);
+    if(gtm){
+      const target = gtm[1].toLowerCase();
+      if(labels[target] != null){ ip = labels[target]; continue; }
+      else { out.push('⚠ goto :' + gtm[1] + ' — no such label'); ip++; continue; }
+    }
+
+    // set /a with +=
+    const incm = line.match(/^set\s+\/a\s+([A-Za-z_]\w*)\s*\+=\s*(.+)$/i);
+    if(incm){
+      const name = incm[1].toLowerCase();
+      const cur = parseInt(vars[name] || '0', 10) || 0;
+      const delta = parseInt(fullExpand(incm[2]), 10) || 0;
+      vars[name] = String(cur + delta);
+      ip++; continue;
+    }
+    // set /a
+    const setam = line.match(/^set\s+\/a\s+([A-Za-z_]\w*)\s*=\s*(.+)$/i);
+    if(setam){
+      const name = setam[1].toLowerCase();
+      const expr = fullExpand(setam[2]);
+      try{
+        const val = Function('"use strict"; return (' + expr + ');')();
+        vars[name] = String(val);
+      }catch(e){ vars[name] = '0'; }
+      ip++; continue;
+    }
+    if(/^set\s+\/p\b/i.test(line)){ ip++; continue; }
+    const setm = line.match(/^set\s+"?([A-Za-z_]\w*)=([^"]*)"?\s*$/i);
+    if(setm){
+      vars[setm[1].toLowerCase()] = setm[2];
+      ip++; continue;
+    }
+
+    // if
+    const ifm = line.match(/^if\s+(not\s+)?(exist\s+\S+|"[^"]*"\s*==\s*"[^"]*"|\S+\s+(?:equ|neq|lss|leq|gtr|geq)\s+\S+)\s+(.+)$/i);
+    if(ifm){
+      const notFlag = !!ifm[1];
+      const cond = ifm[2].trim();
+      const rest = ifm[3].trim();
+      let result = false;
+      const existM = cond.match(/^exist\s+(\S+)/i);
+      if(existM){
+        const target = existM[1].toLowerCase();
+        result = !/missing|nothing|nonexistent|nope/.test(target);
+      } else {
+        const eqm = cond.match(/^"?([^"=]+)"?\s*==\s*"?([^"]*)"?$/);
+        const numm = cond.match(/^(\S+)\s+(equ|neq|lss|leq|gtr|geq)\s+(\S+)$/i);
+        if(eqm){
+          const L = fullExpand(eqm[1].trim()).replace(/^"|"$/g, '');
+          const R = eqm[2].replace(/^"|"$/g, '').trim();
+          result = L === R;
+        } else if(numm){
+          const L = parseFloat(fullExpand(numm[1])) || 0;
+          const R = parseFloat(numm[3]) || 0;
+          const op = numm[2].toLowerCase();
+          if(op === 'equ') result = L === R;
+          else if(op === 'neq') result = L !== R;
+          else if(op === 'lss') result = L < R;
+          else if(op === 'leq') result = L <= R;
+          else if(op === 'gtr') result = L > R;
+          else if(op === 'geq') result = L >= R;
+        }
+      }
+      if(notFlag) result = !result;
+      if(result){
+        const em = rest.match(/^@?echo\s+(.+)$/i);
+        if(em) out.push(fullExpand(em[1]));
+        const gm = rest.match(/^goto\s+:?([A-Za-z_]\w*)/i);
+        if(gm){
+          const t = gm[1].toLowerCase();
+          if(labels[t] != null){ ip = labels[t]; continue; }
+        }
+      }
+      ip++; continue;
+    }
+
+    // echo
+    const em = line.match(/^@?echo\s*(.*)$/i);
+    if(em){
+      let txt = em[1];
+      if(txt.trim() === ''){ out.push(''); ip++; continue; }
+      if(txt.trim().toLowerCase() === 'off'){ ip++; continue; }
+      out.push(fullExpand(txt));
+      ip++; continue;
+    }
+
+    ip++;
+  }
+  if(steps >= MAX) out.push('⚠ Stopped after ' + MAX + ' steps.');
+  return { ok:true, output: out.join('\n') };
+}
+
+function runCode(src, lang){
+  try{
+    if(lang === 'python') return runPython(src);
+    if(lang === 'bat')    return runBat(src);
+    if(lang === 'js')     return runJS(src);
+    return { ok:false, output:'', error:'Unknown language: ' + lang };
+  } catch(e){
+    return { ok:false, output:'', error: String(e.message || e) };
+  }
+}
+
+/* ============================================================
+   view playground
+   ============================================================ */
+let pgLang = 'python';
+const PG_SAMPLES = {
+  python:'# Python playground\nname = "Ada"\nage = 36\nprint("Hi, " + name)\nprint("Next year:", age + 1)\n\nfor i in range(1, 4):\n    print("count", i)\n\nnums = [3, 1, 2]\nnums.append(4)\nprint(sorted(nums))\n',
+  bat:'@echo off\nset user=Ada\necho Hello, %user%\n\nset /a total=3*7\necho total is %total%\n\nif %total% gtr 20 echo that is a lot\n\nset word=HelloWorld\necho %word:~0,5%\n',
+  js:'// JavaScript playground\nlet score = 10;\nconst bonus = 5;\nconsole.log("Total:", score + bonus);\n\nfor (let i = 1; i <= 3; i++) {\n  console.log("count", i);\n}\n'
+};
+function viewPlayground(){
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.2rem">' +
+      '<h1 style="font-size:2.2rem">Playground</h1>' +
+      '<p>A scratch pad with a small interpreter. Python handles variables, arithmetic, strings, lists, dicts, if/else, for-range, while, and simple functions. Batch handles set, set /a, echo, if comparisons, string slicing, goto. JS runs the real thing in the browser.</p>' +
+    '</div>' +
+    '<div class="langtabs">' +
+      ['python','bat','js'].map(l => '<button class="pill ' + (l === pgLang ? 'on' : '') + '" data-lang="' + l + '">' + (l === 'bat' ? 'batch' : l) + '</button>').join('') +
+      '<span class="grow"></span>' +
+      '<button class="btn ghost sm" id="pgClear">Clear output</button>' +
+    '</div>' +
+    '<div class="pg">' +
+      '<div>' +
+        '<textarea class="editor" id="pgEditor" style="min-height:380px" spellcheck="false">' + esc(PG_SAMPLES[pgLang]) + '</textarea>' +
+        '<div class="row wrap" style="margin-top:.7rem">' +
+          '<button class="btn ok" id="pgRun">▶ Run (Ctrl+Enter)</button>' +
+          '<button class="btn ghost sm" id="pgReset">Reset sample</button>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="dim" style="font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Output</div>' +
+        '<div class="console" id="pgOut"><span class="sys">Ready. Press Run.</span></div>' +
+      '</div>' +
+    '</div>' +
+  '</section>';
+
+  $$('[data-lang]').forEach(b => b.onclick = () => {
+    pgLang = b.dataset.lang;
+    $$('[data-lang]').forEach(x => x.classList.toggle('on', x.dataset.lang === pgLang));
+    $('#pgEditor').value = PG_SAMPLES[pgLang];
+  });
+  const run = () => {
+    const res = runCode($('#pgEditor').value, pgLang);
+    const out = $('#pgOut');
+    out.innerHTML = res.ok
+      ? esc(res.output || '(no output)')
+      : (res.output ? esc(res.output) + '\n' : '') + '<span class="err">' + esc(res.error) + '</span>';
+  };
+  $('#pgRun').onclick = run;
+  $('#pgClear').onclick = () => $('#pgOut').innerHTML = '<span class="sys">Cleared.</span>';
+  $('#pgReset').onclick = () => { $('#pgEditor').value = PG_SAMPLES[pgLang]; };
+  $('#pgEditor').addEventListener('keydown', e => {
+    if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); run(); }
+  });
+}
+
+/* ============================================================
+   view cheats
+   ============================================================ */
+function viewCheats(){
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.2rem">' +
+      '<h1 style="font-size:2.2rem">Cheat sheet</h1>' +
+      '<p>Quick reference. Keep this open while you write code.</p>' +
+    '</div>' +
+    '<div class="cheat">' +
+      CHEATS.map(c =>
+        '<div class="cheatcard">' +
+          '<h4>' + esc(c.title) + '</h4>' +
+          c.rows.map(([a, b]) => '<div class="row"><code>' + esc(a) + '</code><span>' + esc(b) + '</span></div>').join('') +
+        '</div>').join('') +
+    '</div>' +
+  '</section>';
+}
+
+/* ============================================================
+   view progress
+   ============================================================ */
+function viewProgress(){
+  const lvl = levelOf(S.xp);
+  const cur = S.xp - xpForLevel(lvl);
+  const need = xpForLevel(lvl+1) - xpForLevel(lvl);
+  const acc = S.quizTotal ? Math.round(S.quizRight / S.quizTotal * 100) : 0;
+  const totalTime = Object.values(S.timeSpent).reduce((a, b) => a + b, 0);
+
+  const days = [];
+  const d = new Date();
+  d.setDate(d.getDate() - 34);
+  for(let i = 0; i < 35; i++){
+    const k = d.toISOString().slice(0,10);
+    const xp = S.days[k] || 0;
+    const cls = xp === 0 ? '' : xp < 20 ? 'l1' : xp < 60 ? 'l2' : xp < 150 ? 'l3' : 'l4';
+    days.push('<i class="' + cls + '" title="' + k + ': ' + xp + ' XP"></i>');
+    d.setDate(d.getDate() + 1);
+  }
+
+  const list = allLessons();
+  const activity = (S.recent || []).slice(0, 15);
+  const rank = currentRank();
+
+  // all ranks + master
+  const allRanks = RANKS.concat([MASTER]);
+
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.2rem">' +
+      '<h1 style="font-size:2.2rem">Progress</h1>' +
+      '<p>Everything saves locally. Nothing leaves this machine.</p>' +
+    '</div>' +
+
+    '<div class="titlebanner" style="margin-top:0">' +
+      '<div class="em">' + rank.em + '</div>' +
+      '<div class="grow">' +
+        '<h3>Rank: ' + esc(rank.name) + '</h3>' +
+        '<div class="desc">' + esc(rank.desc) + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="card" style="margin-top:1rem">' +
+      '<div class="row wrap" style="justify-content:space-between">' +
+        '<div><h3 style="margin:0">Level ' + lvl + '</h3>' +
+        '<div class="muted" style="font-size:.85rem">' + cur + ' / ' + need + ' XP to next level</div></div>' +
+        '<span class="tag g">' + S.xp + ' XP</span>' +
+      '</div>' +
+      '<div class="lvlbar" style="margin-top:.8rem"><div style="width:' + Math.min(100, cur/need*100) + '%"></div></div>' +
+    '</div>' +
+
+    '<div class="grid g4" style="margin-top:1rem">' +
+      '<div class="kpi"><b>' + S.lessonsDone + '</b><small>Lessons done</small></div>' +
+      '<div class="kpi"><b>' + acc + '%</b><small>Quiz accuracy</small></div>' +
+      '<div class="kpi"><b>' + S.codeDone + '</b><small>Code steps</small></div>' +
+      '<div class="kpi"><b>' + S.focusMinutes + '</b><small>Focus min</small></div>' +
+      '<div class="kpi"><b>' + streak() + '</b><small>Streak</small></div>' +
+      '<div class="kpi"><b>' + S.badges.length + '/' + BADGES.length + '</b><small>Badges</small></div>' +
+      '<div class="kpi"><b>' + fmtDur(totalTime) + '</b><small>Time in lessons</small></div>' +
+      '<div class="kpi"><b>' + (S.custom.length || 0) + '</b><small>Your lessons</small></div>' +
+    '</div>' +
+
+    '<h2 style="margin:2.4rem 0 .8rem;font-size:1.3rem">Ranks</h2>' +
+    '<p class="muted" style="margin-top:0;font-size:.88rem">Earn XP to climb the levels. Every 5 levels you unlock a new rank. Finish every lesson to unlock the last one.</p>' +
+    '<div class="titlegrid">' +
+      allRanks.map(r => {
+        const got = S.titlesSeen && S.titlesSeen.includes(r.name);
+        const isCurrent = r.name === rank.name;
+        const req = r.min === 999 ? 'Finish every lesson' : 'Level ' + r.min;
+        return '<div class="tcard ' + (got ? 'got' : '') + ' ' + (isCurrent ? 'current' : '') + '">' +
+          (!got ? '<div class="lock">🔒</div>' : '') +
+          '<div class="em">' + r.em + '</div>' +
+          '<h4>' + esc(r.name) + '</h4>' +
+          '<small>' + esc(req) + '</small>' +
+        '</div>';
+      }).join('') +
+    '</div>' +
+
+    '<div class="row" style="justify-content:space-between;margin:2.4rem 0 .6rem">' +
+      '<h2 style="font-size:1.3rem;margin:0">Last 35 days</h2>' +
+      '<button class="btn ghost sm" id="toggleHard">' + (S.hardMode ? '🥷 Hard mode ON' : 'Enable hard mode') + '</button>' +
+    '</div>' +
+    '<div class="card"><div class="heat">' + days.join('') + '</div>' +
+      '<div class="muted" style="font-size:.78rem;margin-top:.7rem">' + (S.hardMode ? 'Hard mode is on. Hints are hidden.' : 'Brighter means more XP. Turn on hard mode to hide all hints.') + '</div>' +
+    '</div>' +
+
+    '<h2 style="margin:2.4rem 0 .8rem;font-size:1.3rem">Badges</h2>' +
+    '<div class="grid g3">' +
+      BADGES.map(b =>
+        '<div class="badge ' + (S.badges.includes(b.id) ? 'got' : '') + '">' +
+          '<div class="ic">' + b.ic + '</div>' +
+          '<div><b>' + esc(b.name) + '</b><small>' + esc(b.desc) + '</small></div>' +
+        '</div>').join('') +
+    '</div>' +
+
+    (activity.length ?
+      '<h2 style="margin:2.4rem 0 .6rem;font-size:1.3rem">Recent activity</h2>' +
+      '<div class="card">' +
+        activity.map(a =>
+          '<div class="activity">' +
+            '<span class="ic">' + a.ic + '</span>' +
+            '<span>' + esc(a.text) + '</span>' +
+            '<span class="when">' + timeAgo(a.when) + '</span>' +
+          '</div>').join('') +
+      '</div>' : '') +
+
+    '<h2 style="margin:2.4rem 0 .8rem;font-size:1.3rem">Lesson checklist</h2>' +
+    '<div class="grid g2">' +
+      list.map(l =>
+        '<div class="card" style="padding:.85rem 1rem">' +
+          '<div class="row" style="justify-content:space-between">' +
+            '<div style="min-width:0">' +
+              '<strong style="font-size:.92rem">' + esc(l.title) + '</strong>' +
+              '<div class="dim" style="font-size:.76rem">' + esc(l.subject) +
+                (S.timeSpent[l.id] ? ' · ' + fmtDur(S.timeSpent[l.id]) : '') +
+              '</div>' +
+            '</div>' +
+            '<span class="tag ' + (S.completed[l.id] ? 'g' : '') + '">' + (S.completed[l.id] ? 'Done' : 'To do') + '</span>' +
+          '</div>' +
+        '</div>').join('') +
+    '</div>' +
+
+    '<div class="row wrap" style="margin-top:2rem">' +
+      '<button class="btn ghost" id="exportBtn">⬇ Export progress</button>' +
+      '<button class="btn ghost" id="importBtn">⬆ Import progress</button>' +
+      '<input type="file" id="importFile" accept=".json" hidden>' +
+      '<button class="btn danger" id="resetAll">Reset everything</button>' +
+    '</div>' +
+  '</section>';
+
+  $('#toggleHard').onclick = () => {
+    S.hardMode = !S.hardMode; save(); viewProgress();
+    toast(S.hardMode ? 'Hard mode on. No hints from here.' : 'Hard mode off');
+  };
+  $('#exportBtn').onclick = () => {
+    const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'lockin-progress.json';
+    a.click();
+  };
+  $('#importBtn').onclick = () => $('#importFile').click();
+  $('#importFile').onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const obj = JSON.parse(r.result);
+        S = Object.assign(defaultState(), obj);
+        save(); paintHud(); toast('Progress imported'); render();
+      }catch(err){ toast('Bad file'); }
+    };
+    r.readAsText(f);
+  };
+  $('#resetAll').onclick = () => {
+    if(confirm('Erase everything? XP, badges, notes, custom lessons, all of it.')){
+      S = defaultState(); save(); paintHud(); toast('Wiped'); render();
+    }
+  };
+}
+function timeAgo(ts){
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if(s < 60) return s + 's ago';
+  if(s < 3600) return Math.floor(s/60) + 'm ago';
+  if(s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+/* ============================================================
+   teacher studio
+   ============================================================ */
+let draft = null;
+function newDraft(){
+  return { id:'custom-' + Date.now(), title:'', subject:'Batch', level:'Beginner',
+           minutes:8, tags:['custom'], desc:'', steps:[] };
+}
+function viewTeacher(){
+  if(!draft) draft = newDraft();
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.2rem">' +
+      '<h1 style="font-size:2.2rem">Studio</h1>' +
+      '<p>Build a lesson. Save it into the library, or export the JSON and hand it to someone else.</p>' +
+    '</div>' +
+    '<div class="studio">' +
+      '<div>' +
+        '<div class="panel">' +
+          '<h3>Lesson info</h3>' +
+          '<label class="fld"><span>Title</span><input id="dTitle" placeholder="Batch: Scheduling tasks"></label>' +
+          '<label class="fld"><span>Subject</span><select id="dSubject">' +
+            '<option>Python</option><option>Batch</option><option>JavaScript</option><option>Web</option><option>Terminal</option><option>Other</option>' +
+          '</select></label>' +
+          '<label class="fld"><span>Level</span><select id="dLevel"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>' +
+          '<label class="fld"><span>Minutes (estimate)</span><input id="dMinutes" type="number" min="1" value="8"></label>' +
+          '<label class="fld"><span>Description</span><textarea id="dDesc" placeholder="One or two lines. What does this teach?"></textarea></label>' +
+          '<label class="fld"><span>Tags (comma separated)</span><input id="dTags" value="custom"></label>' +
+        '</div>' +
+        '<div class="panel" style="margin-top:1rem">' +
+          '<h3>Your lessons</h3>' +
+          '<div id="myLessons"></div>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="panel">' +
+          '<h3>Steps</h3>' +
+          '<div class="row wrap" style="margin-bottom:1rem">' +
+            '<button class="btn sm" data-add="read">+ Read</button>' +
+            '<button class="btn sm" data-add="quiz">+ Quiz</button>' +
+            '<button class="btn sm" data-add="predict">+ Predict output</button>' +
+            '<button class="btn sm" data-add="code">+ Code</button>' +
+            '<button class="btn sm" data-add="type">+ Recall</button>' +
+          '</div>' +
+          '<div id="dSteps"></div>' +
+        '</div>' +
+        '<div class="panel" style="margin-top:1rem">' +
+          '<h3>Publish</h3>' +
+          '<div class="row wrap">' +
+            '<button class="btn pri" id="saveLesson">💾 Save</button>' +
+            '<button class="btn ghost" id="downloadLesson">⬇ Download</button>' +
+            '<button class="btn ghost" id="copyLesson">📋 Copy JSON</button>' +
+            '<button class="btn ghost" id="importLesson">⬆ Import</button>' +
+            '<button class="btn ghost" id="previewLesson">▶ Preview</button>' +
+            '<button class="btn danger" id="newLesson">New draft</button>' +
+          '</div>' +
+          '<input type="file" id="fileInput" accept=".json" hidden>' +
+          '<pre class="code" id="jsonPreview" style="max-height:280px;overflow:auto;margin-top:1rem"></pre>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</section>';
+
+  $('#dTitle').value = draft.title;
+  $('#dSubject').value = draft.subject;
+  $('#dLevel').value = draft.level;
+  $('#dMinutes').value = draft.minutes;
+  $('#dDesc').value = draft.desc;
+  $('#dTags').value = (draft.tags || []).join(', ');
+
+  const bind = (id, key, fn) => $('#' + id).addEventListener('input', e => {
+    draft[key] = fn ? fn(e.target.value) : e.target.value;
+    paintJson(); paintMyLessons();
+  });
+  bind('dTitle','title'); bind('dSubject','subject'); bind('dLevel','level');
+  bind('dMinutes','minutes', v => +v || 1);
+  bind('dDesc','desc');
+  bind('dTags','tags', v => v.split(',').map(s => s.trim()).filter(Boolean));
+
+  $$('[data-add]').forEach(b => b.onclick = () => {
+    draft.steps.push(blankStep(b.dataset.add));
+    paintSteps();
+  });
+
+  $('#saveLesson').onclick = () => {
+    const err = validateDraft();
+    if(err){ toast('⚠ ' + err); return; }
+    const i = S.custom.findIndex(l => l.id === draft.id);
+    if(i >= 0) S.custom[i] = JSON.parse(JSON.stringify(draft));
+    else S.custom.push(JSON.parse(JSON.stringify(draft)));
+    pushRecent('🛠️', 'Saved lesson: ' + draft.title);
+    save(); checkBadges(); checkRankUp(); paintMyLessons(); paintJson();
+    toast('Lesson saved to your library');
+  };
+  $('#downloadLesson').onclick = () => {
+    const blob = new Blob([JSON.stringify(draft, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (draft.title || 'lesson').replace(/\W+/g,'-').toLowerCase() + '.json';
+    a.click();
+  };
+  $('#copyLesson').onclick = () => {
+    if(navigator.clipboard) navigator.clipboard.writeText(JSON.stringify(draft, null, 2));
+    toast('JSON copied');
+  };
+  $('#importLesson').onclick = () => $('#fileInput').click();
+  $('#fileInput').onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const obj = JSON.parse(r.result);
+        if(!obj.steps) throw new Error('missing steps');
+        obj.id = obj.id || 'custom-' + Date.now();
+        draft = obj; viewTeacher(); toast('Imported');
+      }catch(err){ toast('Bad lesson file'); }
+    };
+    r.readAsText(f);
+  };
+  $('#previewLesson').onclick = () => {
+    const err = validateDraft();
+    if(err){ toast('⚠ ' + err); return; }
+    const tmpId = 'preview-' + Date.now();
+    const copy = JSON.parse(JSON.stringify(draft));
+    copy.id = tmpId;
+    const i = S.custom.findIndex(l => l.id === tmpId);
+    if(i >= 0) S.custom[i] = copy; else S.custom.push(copy);
+    go('lesson/' + tmpId);
+  };
+  $('#newLesson').onclick = () => { draft = newDraft(); viewTeacher(); };
+
+  paintSteps(); paintMyLessons(); paintJson();
+}
+
+function blankStep(type){
+  switch(type){
+    case 'read':    return {type:'read', title:'Read this', body:'Explain the idea.\n\n~~~python\nprint("example")\n~~~'};
+    case 'quiz':    return {type:'quiz', title:'Quick check', q:'Your question?', options:['A','B','C','D'], answer:0, why:'Explain why.'};
+    case 'predict': return {type:'predict', title:'What does this print?', lang:'python', code:'x = 1\nprint(x)', answer:'1', why:'Explain.'};
+    case 'code':    return {type:'code', title:'Write it', lang:'python', prompt:'What should they write?', starter:'', expect:'expected output', hint:'A nudge.'};
+    case 'type':    return {type:'type', title:'From memory', prompt:'What command…?', answer:'answer', hint:'A nudge.'};
+  }
+  return {type:'read', title:'Step', body:''};
+}
+
+function paintSteps(){
+  const host = $('#dSteps');
+  if(!draft.steps.length){
+    host.innerHTML = '<p class="muted" style="font-size:.88rem">No steps yet. Add a <strong>Read</strong> to explain something, then a <strong>Quiz</strong> or <strong>Code</strong> to make them practise it.</p>';
+    return;
+  }
+  host.innerHTML = draft.steps.map((s, i) =>
+    '<div class="steppedit" data-i="' + i + '">' +
+      '<div class="hd">' +
+        '<b>' + (i+1) + '. ' + s.type + '</b>' +
+        '<span class="grow"></span>' +
+        '<button class="btn ghost sm" data-up="' + i + '" ' + (i === 0 ? 'disabled' : '') + '>↑</button>' +
+        '<button class="btn ghost sm" data-down="' + i + '" ' + (i === draft.steps.length-1 ? 'disabled' : '') + '>↓</button>' +
+        '<button class="btn danger sm" data-del="' + i + '">✕</button>' +
+      '</div>' +
+      stepFields(s, i) +
+    '</div>').join('');
+
+  $$('[data-del]').forEach(b => b.onclick = () => { draft.steps.splice(+b.dataset.del, 1); paintSteps(); paintJson(); });
+  $$('[data-up]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.up;
+    [draft.steps[i-1], draft.steps[i]] = [draft.steps[i], draft.steps[i-1]];
+    paintSteps(); paintJson();
+  });
+  $$('[data-down]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.down;
+    [draft.steps[i+1], draft.steps[i]] = [draft.steps[i], draft.steps[i+1]];
+    paintSteps(); paintJson();
+  });
+
+  $$('#dSteps [data-f]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const i = +inp.closest('.steppedit').dataset.i;
+      const f = inp.dataset.f;
+      let v = e.target.value;
+      if(f === 'options') v = v.split('\n').map(x => x.trim()).filter(Boolean);
+      if(f === 'answer' && draft.steps[i].type === 'quiz') v = +v || 0;
+      draft.steps[i][f] = v;
+      paintJson();
+    });
+  });
+}
+
+function stepFields(s, i){
+  const T = (f, label, ph, val) =>
+    '<label class="fld"><span>' + label + '</span><input data-f="' + f + '" placeholder="' + esc(ph || '') + '" value="' + esc(val == null ? '' : val) + '"></label>';
+  const TA = (f, label, val, h) =>
+    '<label class="fld"><span>' + label + '</span><textarea data-f="' + f + '" style="min-height:' + (h || 90) + 'px">' + esc(val || '') + '</textarea></label>';
+
+  if(s.type === 'read') return T('title','Title','Read this', s.title) + TA('body','Body — use ~~~lang for code blocks', s.body, 140);
+  if(s.type === 'quiz') return TA('q','Question', s.q, 70) + TA('options','Options (one per line)', (s.options||[]).join('\n'), 110) + T('answer','Correct index (0-based)','0', s.answer) + T('why','Explanation','Why that is the right answer', s.why);
+  if(s.type === 'predict') return T('title','Title','What does this print?', s.title) + TA('code','Code', s.code, 110) + T('answer','Expected output','1', s.answer) + T('why','Explanation','Explain it', s.why);
+  if(s.type === 'code') return T('title','Title','Write it', s.title) + T('lang','Language (python / bat / js)','python', s.lang) + TA('prompt','Prompt', s.prompt, 70) + TA('starter','Starter code', s.starter, 80) + T('expect','Expected output','expected output', s.expect) + T('hint','Hint','A nudge', s.hint);
+  if(s.type === 'type') return T('title','Title','From memory', s.title) + TA('prompt','Prompt', s.prompt, 60) + T('answer','Accepted answer','answer', s.answer) + T('hint','Hint','A nudge', s.hint);
+  return '';
+}
+
+function paintJson(){
+  const el = $('#jsonPreview');
+  if(el) el.textContent = JSON.stringify(draft, null, 2);
+}
+function paintMyLessons(){
+  const el = $('#myLessons');
+  if(!el) return;
+  if(!S.custom.length){ el.innerHTML = '<p class="muted" style="font-size:.85rem">Nothing saved yet.</p>'; return; }
+  el.innerHTML = S.custom.map(l =>
+    '<div class="row" style="justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--line)">' +
+      '<div style="min-width:0">' +
+        '<div style="font-size:.88rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(l.title || 'Untitled') + '</div>' +
+        '<div class="dim" style="font-size:.74rem">' + l.steps.length + ' steps · ' + esc(l.subject) + '</div>' +
+      '</div>' +
+      '<div class="row" style="gap:.3rem">' +
+        '<button class="btn ghost sm" data-edit="' + l.id + '">edit</button>' +
+        '<button class="btn danger sm" data-rm="' + l.id + '">✕</button>' +
+      '</div>' +
+    '</div>').join('');
+  $$('[data-edit]').forEach(b => b.onclick = () => {
+    draft = JSON.parse(JSON.stringify(S.custom.find(l => l.id === b.dataset.edit)));
+    viewTeacher();
+  });
+  $$('[data-rm]').forEach(b => b.onclick = () => {
+    S.custom = S.custom.filter(l => l.id !== b.dataset.rm);
+    save(); paintMyLessons(); toast('Deleted');
+  });
+}
+function validateDraft(){
+  if(!draft.title.trim()) return 'Give the lesson a title';
+  if(!draft.steps.length) return 'Add at least one step';
+  for(let i = 0; i < draft.steps.length; i++){
+    const s = draft.steps[i];
+    if(s.type === 'read' && !s.body) return 'Step ' + (i+1) + ': body is empty';
+    if(s.type === 'quiz' && (!s.options || s.options.length < 2)) return 'Step ' + (i+1) + ': need at least 2 options';
+    if(s.type === 'code' && !s.expect) return 'Step ' + (i+1) + ': expected output is empty';
+    if(s.type === 'predict' && !s.answer) return 'Step ' + (i+1) + ': expected output is empty';
+    if(s.type === 'type' && !s.answer) return 'Step ' + (i+1) + ': answer is empty';
+  }
+  return null;
+}
+
+/* ============================================================
+   view about
+   ============================================================ */
+function viewAbout(){
+  app.innerHTML =
+  '<section class="view on">' +
+    '<div class="hero" style="padding:1.4rem 0 1.2rem">' +
+      '<h1 style="font-size:2.2rem">About</h1>' +
+      '<p>One HTML file. No backend, no login, no tracking. Everything lives in your browser\'s local storage.</p>' +
+    '</div>' +
+
+    '<div class="grid g2">' +
+      '<div class="card"><h3>What this is</h3>' +
+        '<p class="muted" style="font-size:.92rem">A learning tool that refuses to let you click next without doing anything. A lesson step is only done when you have typed the right answer, predicted the output, or written code that produces the right result.</p>' +
+        '<p class="muted" style="font-size:.92rem">The interpreters are not full runtimes. They handle the common 80% so the lessons can be self-contained. For real work, run Python or cmd.exe on your own machine.</p>' +
+      '</div>' +
+      '<div class="card"><h3>Ranks</h3>' +
+        '<p class="muted" style="font-size:.92rem">Earn XP and levels to unlock rank titles. Every 5 levels or so you climb to the next one.</p>' +
+        '<ul class="muted" style="font-size:.88rem;padding-left:1.2rem;margin:.5rem 0">' +
+          RANKS.map(r => '<li>' + r.em + ' <b>' + r.name + '</b> — level ' + r.min + '</li>').join('') +
+          '<li>' + MASTER.em + ' <b>' + MASTER.name + '</b> — finish every lesson</li>' +
+        '</ul>' +
+      '</div>' +
+    '</div>' +
+
+    '<h2 style="margin:2.4rem 0 .8rem;font-size:1.3rem">Step types</h2>' +
+    '<div class="grid g3">' +
+      '<div class="card"><span class="tag">read</span><h3 style="margin-top:.6rem;font-size:1rem">Explanation</h3><p class="muted" style="font-size:.88rem;margin:0">Markdown text with ~~~lang code blocks. Ends with a Got it button.</p></div>' +
+      '<div class="card"><span class="tag v">quiz</span><h3 style="margin-top:.6rem;font-size:1rem">Multiple choice</h3><p class="muted" style="font-size:.88rem;margin:0">Four options, one right answer, and a written explanation.</p></div>' +
+      '<div class="card"><span class="tag v">predict</span><h3 style="margin-top:.6rem;font-size:1rem">Predict the output</h3><p class="muted" style="font-size:.88rem;margin:0">Show code, you type what it prints. Builds a mental model.</p></div>' +
+      '<div class="card"><span class="tag y">code</span><h3 style="margin-top:.6rem;font-size:1rem">Write and run</h3><p class="muted" style="font-size:.88rem;margin:0">A real editor with a small interpreter for Python, Batch and JS.</p></div>' +
+      '<div class="card"><span class="tag g">type</span><h3 style="margin-top:.6rem;font-size:1rem">Recall</h3><p class="muted" style="font-size:.88rem;margin:0">Type the answer from memory. Active recall beats re-reading.</p></div>' +
+      '<div class="card"><span class="tag r">lock in</span><h3 style="margin-top:.6rem;font-size:1rem">Focus timer</h3><p class="muted" style="font-size:.88rem;margin:0">A countdown that rewards you for staying put.</p></div>' +
+    '</div>' +
+
+    '<h2 style="margin:2.4rem 0 .8rem;font-size:1.3rem">Keyboard</h2>' +
+    '<div class="grid g3">' +
+      '<div class="card"><h3 style="font-size:1rem">Ctrl + K</h3><p class="muted" style="font-size:.88rem;margin:0">Command palette. Jump anywhere.</p></div>' +
+      '<div class="card"><h3 style="font-size:1rem">Ctrl + Enter</h3><p class="muted" style="font-size:.88rem;margin:0">Run the code in a playground or code step.</p></div>' +
+      '<div class="card"><h3 style="font-size:1rem">Esc</h3><p class="muted" style="font-size:.88rem;margin:0">Close dialogs.</p></div>' +
+    '</div>' +
+
+    '<div class="row wrap" style="margin-top:2rem">' +
+      '<button class="btn pri" data-go="lessons">Pick a lesson →</button>' +
+      '<button class="btn ghost" data-go="teacher">Build your own</button>' +
+    '</div>' +
+  '</section>';
+}
+
+/* ============================================================
+   command palette
+   ============================================================ */
+const cmdInput = $('#cmdInput'), cmdResults = $('#cmdResults'), cmdPal = $('#cmdPal');
+let cmdItems = [], cmdSel = 0;
+
+function buildCmdItems(){
+  const items = [];
+  [['home','Home','🏠'],['lessons','All lessons','📚'],['cheats','Cheat sheet','📋'],
+   ['playground','Playground','🎮'],['progress','Progress','📊'],
+   ['teacher','Studio','🛠️'],['about','About','ℹ️']].forEach(([route, name, ic]) => {
+    items.push({ ic, label:name, sub:'page', run: () => go(route) });
+  });
+  items.push({ ic:'🎲', label:'Random lesson', sub:'action', run: () => {
+    const all = allLessons();
+    const l = all[Math.floor(Math.random() * all.length)];
+    go('lesson/' + l.id);
+  }});
+  items.push({ ic: S.hardMode ? '🥷' : '🎯', label: S.hardMode ? 'Turn off hard mode' : 'Turn on hard mode', sub:'action', run: () => {
+    S.hardMode = !S.hardMode; save(); toast(S.hardMode ? 'Hard mode on' : 'Hard mode off'); render();
+  }});
+  items.push({ ic:'🌗', label:'Toggle light / dark', sub:'action', run: toggleTheme });
+  allLessons().forEach(l => {
+    const ic = l.subject === 'Python' ? '🐍' : l.subject === 'Batch' ? '🪟' : l.subject === 'JavaScript' ? '🟨' : l.subject === 'Web' ? '🌐' : '⌨️';
+    items.push({ ic, label: l.title, sub: l.subject, run: () => go('lesson/' + l.id) });
+  });
+  return items;
+}
+
+function openCmdPal(){
+  cmdPal.classList.add('on');
+  cmdInput.value = '';
+  cmdItems = buildCmdItems();
+  cmdSel = 0;
+  paintCmd('');
+  setTimeout(() => cmdInput.focus(), 50);
+}
+function closeCmdPal(){ cmdPal.classList.remove('on'); }
+function paintCmd(q){
+  q = q.trim().toLowerCase();
+  const filtered = cmdItems.filter(it =>
+    !q || it.label.toLowerCase().includes(q) || (it.sub || '').toLowerCase().includes(q)
+  ).slice(0, 14);
+  if(!filtered.length){ cmdResults.innerHTML = '<div class="result">No matches.</div>'; return; }
+  cmdResults.innerHTML = filtered.map((it, i) =>
+    '<div class="result ' + (i === cmdSel ? 'sel' : '') + '" data-i="' + i + '">' +
+      '<span class="ic">' + it.ic + '</span>' +
+      '<span>' + esc(it.label) + '</span>' +
+      '<span class="sub">' + esc(it.sub || '') + '</span>' +
+    '</div>').join('');
+  $$('#cmdResults .result').forEach((el, i) => {
+    el.onclick = () => { const f = filtered[i]; if(f){ closeCmdPal(); f.run(); } };
+  });
+  cmdResults._filtered = filtered;
+}
+cmdInput.addEventListener('input', () => { cmdSel = 0; paintCmd(cmdInput.value); });
+cmdInput.addEventListener('keydown', e => {
+  const f = cmdResults._filtered || [];
+  if(e.key === 'ArrowDown'){ e.preventDefault(); cmdSel = Math.min(cmdSel + 1, f.length - 1); paintCmd(cmdInput.value); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); cmdSel = Math.max(cmdSel - 1, 0); paintCmd(cmdInput.value); }
+  else if(e.key === 'Enter'){ e.preventDefault(); if(f[cmdSel]){ closeCmdPal(); f[cmdSel].run(); } }
+});
+cmdPal.addEventListener('click', e => { if(e.target === cmdPal) closeCmdPal(); });
+$('#paletteBtn').onclick = openCmdPal;
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openCmdPal(); }
+  if(e.key === 'Escape'){ closeCmdPal(); $('#modal').classList.remove('on'); }
+});
+
+/* ============================================================
+   theme
+   ============================================================ */
+function applyTheme(){ document.body.classList.toggle('light', S.theme === 'light'); }
+function toggleTheme(){ S.theme = S.theme === 'light' ? 'dark' : 'light'; save(); applyTheme(); }
+$('#themeBtn').onclick = toggleTheme;
+
+/* modal backdrop */
+$('#modal').addEventListener('click', e => { if(e.target.id === 'modal') e.target.classList.remove('on'); });
+
+/* ============================================================
+   boot
+   ============================================================ */
+applyTheme();
+paintHud();
+checkBadges();
+if(!location.hash) location.hash = '#/home';
+render();
+
+(function(){
+  const d = todayKey();
+  if(!S.days[d]) S.days[d] = 0;
+  S.lastActive = Date.now();
+  save();
+})();
+</script>
+</body>
+</html>
